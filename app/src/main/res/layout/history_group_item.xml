@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:background="@color/history_background"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/historyImageView"
+        android:layout_width="100dp"
+        android:layout_height="80dp"
+        android:layout_gravity="start"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/default_station_background" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp">
+
+        <TextView
+            android:textColor="@android:color/white"
+            android:text="@string/history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/play_history_station_name"
+            android:textSize="20sp"
+            android:textColor="@android:color/white"
+            android:text="@string/history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</LinearLayout>

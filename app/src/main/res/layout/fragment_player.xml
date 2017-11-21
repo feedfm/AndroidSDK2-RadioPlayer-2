@@ -1,0 +1,193 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context="fm.feed.androidsdk2.richplayer.PlayerFragment"
+    android:orientation="vertical">
+    <include layout="@layout/toolbar"/>
+
+
+
+    <FrameLayout
+        android:id="@+id/container_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/controls"
+        android:layout_width="wrap_content"
+        android:layout_height="220dp"
+        android:layout_gravity="bottom">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:id="@+id/relativeLayout">
+
+            <ProgressBar
+                android:visibility="invisible"
+                android:background="#00000000"
+                android:id="@+id/buffering_spinner"
+                android:layout_alignTop="@+id/play_pause_button"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <ImageButton
+                android:background="#00000000"
+                android:id="@+id/play_pause_button"
+                android:src="@drawable/play_black"
+                android:layout_marginTop="20dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:scaleType="fitXY"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <ImageButton
+                android:id="@+id/skipButton"
+
+                android:background="#00000000"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:contentDescription="dd"
+                android:src="@drawable/skip_black"
+                android:layout_alignTop="@+id/play_pause_button"
+                android:scaleType="fitXY"
+                android:layout_marginLeft="30dp"
+                android:layout_marginStart="30dp"
+                android:layout_toEndOf="@+id/play_pause_button"
+                android:layout_toRightOf="@+id/play_pause_button" />
+
+            <ImageButton
+                android:id="@+id/historyButton"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignTop="@+id/play_pause_button"
+                android:background="#00000000"
+                android:scaleType="fitXY"
+                android:src="@drawable/playlist_history_black"
+                android:layout_marginLeft="25dp"
+                android:layout_marginStart="25dp"
+                android:layout_toEndOf="@+id/dislikeButton"
+                android:layout_toRightOf="@+id/dislikeButton" />
+
+            <ImageButton
+                android:id="@+id/onDemandButton"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignTop="@+id/play_pause_button"
+                android:background="#00000000"
+                android:scaleType="fitXY"
+                android:src="@drawable/playlist_history_ondemand_black"
+                android:layout_marginLeft="25dp"
+                android:layout_marginStart="25dp"
+                android:visibility="gone"
+                android:layout_toEndOf="@+id/historyButton"
+                android:layout_toRightOf="@+id/historyButton" />
+
+            <ImageButton
+                android:id="@+id/dislikeButton"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignTop="@+id/play_pause_button"
+                android:background="#00000000"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_dislike_unfilled_black"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_toEndOf="@+id/likeButton"
+                android:layout_toRightOf="@+id/likeButton" />
+
+            <ImageButton
+                android:background="#00000000"
+                android:id="@+id/likeButton"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignTop="@+id/play_pause_button"
+                android:layout_marginLeft="30dp"
+                android:layout_marginStart="30dp"
+                android:scaleType="fitXY"
+                android:layout_toEndOf="@+id/skipButton"
+                android:layout_toRightOf="@+id/skipButton"
+                android:src="@drawable/ic_like_unfilled_black" />
+
+            <ImageView
+                android:layout_width="0.5dp"
+                android:layout_height="66dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_toEndOf="@+id/skipButton"
+                android:layout_toRightOf="@+id/skipButton"
+                android:background="@color/mild_grey" />
+
+            <ImageView
+                android:layout_width="0.5dp"
+                android:layout_height="66dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_toEndOf="@+id/dislikeButton"
+                android:layout_toRightOf="@+id/dislikeButton"
+                android:background="@color/mild_grey" />
+
+            <ImageView
+                android:layout_width="0.5dp"
+                android:layout_height="66dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_toEndOf="@+id/play_pause_button"
+                android:layout_toRightOf="@+id/play_pause_button"
+                android:background="@color/mild_grey" />
+
+            <ImageView
+                android:background="@color/mild_grey"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_toEndOf="@+id/dislikeButton"
+                android:layout_toRightOf="@+id/dislikeButton"
+                android:layout_width="0.5dp"
+                android:layout_height="66dp" />
+            </RelativeLayout>
+
+        <TextView
+            android:layout_marginTop="15dp"
+            android:textAlignment="center"
+            android:id="@+id/title_track"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/artist_track"
+            android:text="Miracle Aligner"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+        <TextView
+            android:id="@+id/artist_track"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/relativeLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="15dp"
+            android:text="The last shadow Puppets"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/powered_by_feed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/relativeLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
+            android:text="Powered by Feed.fm"
+            android:textSize="12sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textAlignment="center" />
+    </RelativeLayout>
+</LinearLayout>
