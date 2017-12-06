@@ -6,9 +6,6 @@
     android:background="@android:color/white"
     tools:context="fm.feed.androidsdk2.richplayer.PlayerFragment"
     android:orientation="vertical">
-    <include layout="@layout/toolbar"/>
-
-
 
     <FrameLayout
         android:id="@+id/container_view"
@@ -20,7 +17,7 @@
     <RelativeLayout
         android:id="@+id/controls"
         android:layout_width="wrap_content"
-        android:layout_height="220dp"
+        android:layout_height="200dp"
         android:layout_gravity="bottom">
 
         <RelativeLayout
@@ -32,7 +29,7 @@
 
             <ProgressBar
                 android:visibility="invisible"
-                android:background="#00000000"
+                android:background="@android:color/transparent"
                 android:id="@+id/buffering_spinner"
                 android:layout_alignTop="@+id/play_pause_button"
                 android:layout_width="25dp"
@@ -100,7 +97,7 @@
                 android:layout_alignTop="@+id/play_pause_button"
                 android:background="#00000000"
                 android:scaleType="fitXY"
-                android:src="@drawable/ic_dislike_unfilled_black"
+                android:src="@drawable/dislike_unfilled_black"
                 android:layout_marginLeft="15dp"
                 android:layout_marginStart="15dp"
                 android:layout_toEndOf="@+id/likeButton"
@@ -117,7 +114,7 @@
                 android:scaleType="fitXY"
                 android:layout_toEndOf="@+id/skipButton"
                 android:layout_toRightOf="@+id/skipButton"
-                android:src="@drawable/ic_like_unfilled_black" />
+                android:src="@drawable/like_unfilled_black" />
 
             <ImageView
                 android:layout_width="0.5dp"
@@ -157,7 +154,7 @@
             </RelativeLayout>
 
         <TextView
-            android:layout_marginTop="15dp"
+
             android:textAlignment="center"
             android:id="@+id/title_track"
             android:layout_width="match_parent"
@@ -173,7 +170,8 @@
             android:layout_above="@+id/relativeLayout"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="10dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:text="The last shadow Puppets"
             android:textAlignment="center" />
 
@@ -187,7 +185,7 @@
             android:layout_marginTop="15dp"
             android:text="Powered by Feed.fm"
             android:textSize="12sp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textAlignment="center" />
     </RelativeLayout>
 </LinearLayout>

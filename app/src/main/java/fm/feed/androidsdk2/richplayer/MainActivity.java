@@ -1,15 +1,21 @@
 package fm.feed.androidsdk2.richplayer;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -17,9 +23,8 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.List;
 
@@ -27,9 +32,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import fm.feed.android.playersdk.FeedAudioPlayer;
 import fm.feed.android.playersdk.FeedPlayerService;
+import fm.feed.android.playersdk.models.NotificationStyle;
 import fm.feed.android.playersdk.models.Station;
 
 public class MainActivity extends AppCompatActivity implements StationsFragment.StationSelectionListener, PlayerFragment.OnPlayerFragmentInteractionListener{
+
 
     @BindView(R.id.tv_unavailable)
     TextView tvUnavailable;
@@ -37,8 +44,6 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
     ProgressBar progressBar;
     @BindView(R.id.toolbar)
     android.support.v7.widget.Toolbar toolbar;
-    @BindView(R.id.back_button)
-    ImageButton backButton;
     FragmentManager mFragmentManager;
     FeedAudioPlayer feedAudioPlayer;
 
@@ -47,20 +52,45 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
         ButterKnife.bind(this);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+        setSupportActionBar(toolbar);
+        ActionBar ab = getSupportActionBar();
+        if ((ab != null) && (getSupportParentActivityIntent() != null)) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
+        final NotificationStyle ni = new NotificationStyle()
+                .setSmallIcon(R.drawable.notify_play_black)
+                .setPlayIcon(R.drawable.notify_play_black)
+                .setPauseIcon(R.drawable.notify_pause_black)
+                .setSkipIcon(R.drawable.notify_skip_black)
+                .setColor(Color.BLACK)
+                .setThumbsUpIcons(R.drawable.notify_like_unfilled_black, R.drawable.notify_like_filled_black)
+                .setThumbsDownIcons(R.drawable.notify_dislike_unfilled_black, R.drawable.notify_dislike_filled_black)
+
+                // .. and our custom notification layouts
+                .setBigContentView(getPackageName(), R.layout.notification_small)
+                .setContentView(getPackageName(), R.layout.notification_small)
+                .setMediaImageId(R.id.notification_icon)
+                .setProgressId(R.id.progress)
+                .setDislikeButtonId(R.id.dislike_button)
+                .setLikeButtonId(R.id.like_button)
+                .setPlayPauseButtonId(R.id.play_pause_notifi_button)
+                .setSkipButtonId(R.id.skip_button)
+                .setTrackTextId(R.id.notification_track_title)
+                .setArtistTextId(R.id.notification_track_artist)
+                .setReleaseTextId(R.id.notification_track_release);
 
         mFragmentManager = getSupportFragmentManager();
+
         FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
             @Override
             public void onPlayerAvailable(FeedAudioPlayer aFeedAudioPlayer) {
                 feedAudioPlayer = aFeedAudioPlayer;
+                feedAudioPlayer.addStationChangedListener(stationListener);
+                stationListener.onStationChanged(feedAudioPlayer.getActiveStation());
                 progressBar.setVisibility(View.INVISIBLE);
+                feedAudioPlayer.setNotificationStyle(ni);
                 loadStationsFragment();
+                setPendingIntent();
             }
 
             @Override
@@ -70,10 +100,25 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
         });
     }
 
+    FeedAudioPlayer.StationChangedListener stationListener  = new FeedAudioPlayer.StationChangedListener() {
+        @Override
+        public void onStationChanged(Station station) {
+            assignLockScreen(station);
+        }
+    };
+
+    private void setPendingIntent(){
+        Intent ai = new Intent(getIntent());
+        ai.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pi = PendingIntent.getActivity(MainActivity.this, 0, ai, PendingIntent.FLAG_CANCEL_CURRENT);
+        feedAudioPlayer.setPendingIntent(pi);
+    }
+
     private void loadStationsFragment()
     {
         StationsFragment fragment = new StationsFragment();
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
+        transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down, R.anim.slide_in_up,R.anim.slide_out_down);
         transaction.replace(R.id.baseLayout, fragment).commit();
     }
 
@@ -81,24 +126,9 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
     {
         PlayerFragment fragment = PlayerFragment.newInstance(stationId);
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        transaction.addToBackStack(StationsFragment.class.getSimpleName());
+        transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down, R.anim.slide_in_up,R.anim.slide_out_down);
+        transaction.addToBackStack(PlayerFragment.class.getSimpleName());
         transaction.replace(R.id.baseLayout, fragment).commit();
-    }
-
-
-   /* @Override
-    public void onStationChanged(int newStationID) {
-        Station station = getStationById((int)newStationID, feedAudioPlayer.getStationList());
-        if(station != null) {
-            feedAudioPlayer.setActiveStation(station);
-            feedAudioPlayer.prepareToPlay(null);
-        }
-    }*/
-
-    @Override
-    public void onClickPoweredBy() {
-        Intent ai = new Intent(this, PoweredByFeedActivity.class);
-        startActivity(ai);
     }
 
     @Override
@@ -138,10 +168,9 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
         Station station = getStationById((int)stationId, feedAudioPlayer.getStationList());
         if(station != null)
         {
-            feedAudioPlayer.setActiveStation(station);
+            feedAudioPlayer.setActiveStation(station, false);
             feedAudioPlayer.prepareToPlay(null);
             loadPlayerFragment((int)stationId);
-            assignLockScreen(station);
         }
     }
 
@@ -153,21 +182,43 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
             bgUrl = null;
         }
 
-        if (bgUrl != null) {
-
-            Glide.with(this).load(bgUrl).asBitmap().into(new SimpleTarget<Bitmap>() {
-                @Override
-                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                    // set this image for the lockscreen and notifications if we're
-                    // playing this station
-                    feedAudioPlayer.setArtwork(resource);
-                }
-            });
-        } else {
+        if (bgUrl != null && !bgUrl.isEmpty()) {
+            Picasso.with(this).load(bgUrl).into(target);
+        }
+        else {
             Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.default_station_background);
             feedAudioPlayer.setArtwork(bm);
         }
     }
+
+    private Target target = new Target() {
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            feedAudioPlayer.setArtwork(bitmap);
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable errorDrawable) {
+            Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.default_station_background);
+            feedAudioPlayer.setArtwork(bm);
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+        }
+    };
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                break;
+        }
+        return true;
+    }
+
     public static @Nullable Station getStationById(int id, List<Station> stationList)
     {
         Station tStation = null;

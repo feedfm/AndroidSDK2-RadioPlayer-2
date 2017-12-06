@@ -6,11 +6,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +22,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.List;
 
@@ -44,11 +48,11 @@ public class AlbumArtFragment extends Fragment {
     Context mContext;
     private int mStationID;
     AlbumArtFragmentListener mListener;
-    int selectedIndex;
+    int selectedIndex = 0;
     int playingStationIndex;
     List<Station> localStationList;
 
-
+    @BindView(R.id.station_description_player) TextView stationDescription;
     @BindView(R.id.albumArtFlipper)     ViewPager viewPager;
     @BindView(R.id.progressBar)         ProgressBar mProgressBar;
     @BindView(R.id.station_name_player) TextView stationTitle;
@@ -57,6 +61,7 @@ public class AlbumArtFragment extends Fragment {
     @BindView(R.id.shareButton)         ImageButton shareButton;
     @BindView(R.id.viewStations)        ImageButton viewStations;
     @BindView(R.id.playArtStation)      ImageButton playButton;
+    @BindView(R.id.gradient_view)       ImageView gradientView;
 
     public AlbumArtFragment() {
         // Required empty public constructor
@@ -76,7 +81,6 @@ public class AlbumArtFragment extends Fragment {
         if (getArguments() != null) {
             mStationID = getArguments().getInt(DEFAULT_STATION_ID);
         }
-
     }
 
     FeedAudioPlayer.PlayListener playListener = new FeedAudioPlayer.PlayListener() {
@@ -100,8 +104,9 @@ public class AlbumArtFragment extends Fragment {
     public void ChangeStation(View view)
     {
         playingStationIndex = selectedIndex;
-        mPlayer.setActiveStation(localStationList.get(selectedIndex));
+        mPlayer.setActiveStation(localStationList.get(selectedIndex), true);
         view.setVisibility(View.INVISIBLE);
+        gradientView.setVisibility(View.INVISIBLE);
     }
 
     @OnClick(R.id.shareButton)
@@ -113,13 +118,19 @@ public class AlbumArtFragment extends Fragment {
     @OnClick(R.id.nextStation)
     public void nextStation()
     {
-        viewPager.setCurrentItem(++selectedIndex);
+        if(viewPager.getChildCount() > selectedIndex)
+        {
+            viewPager.setCurrentItem(++selectedIndex);
+        }
     }
 
     @OnClick(R.id.previousStation)
     public void previousStation()
     {
-        viewPager.setCurrentItem(--selectedIndex);
+        if(selectedIndex > 0) {
+
+            viewPager.setCurrentItem(--selectedIndex);
+        }
     }
 
     @OnClick(R.id.viewStations)
@@ -179,7 +190,12 @@ public class AlbumArtFragment extends Fragment {
             }
             playingStationIndex = selectedIndex = temp;
             stationTitle.setText(localStationList.get(temp).getName());
+            if(localStationList.get(temp).containsOption("subheader")) {
+                stationDescription.setText(localStationList.get(temp).getOption("subheader").toString());
+            }
+
             playButton.setVisibility(View.INVISIBLE);
+            gradientView.setVisibility(View.INVISIBLE);
             viewPager.setAdapter(pagerAdapter);
             viewPager.setCurrentItem(temp);
             viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -190,17 +206,26 @@ public class AlbumArtFragment extends Fragment {
 
                 @Override
                 public void onPageSelected(int position) {
-
+                    selectedIndex = position;
+                    if(localStationList.get(position).containsOption("subheader")) {
+                        stationDescription.setVisibility(View.VISIBLE);
+                        stationDescription.setText(localStationList.get(position).getOption("subheader").toString());
+                    }
+                    else {
+                        stationDescription.setVisibility(View.GONE);
+                        stationDescription.setText("");
+                    }
                     stationTitle.setText(localStationList.get(position).getName());
-                    if(position != playingStationIndex )
+                    if(position == playingStationIndex)
                     {
-                        playButton.setVisibility(View.VISIBLE);
+                        playButton.setVisibility(View.INVISIBLE);
+                        gradientView.setVisibility(View.INVISIBLE);
 
-                        //setColorFilter(semiTransparentGrey, PorterDuff.Mode.SRC_ATOP);
                     }
                     else {
 
-                        playButton.setVisibility(View.INVISIBLE);
+                        playButton.setVisibility(View.VISIBLE);
+                        gradientView.setVisibility(View.VISIBLE);
                     }
 
                 }
@@ -210,7 +235,6 @@ public class AlbumArtFragment extends Fragment {
 
                 }
             });
-
 
         }
     }
@@ -222,6 +246,7 @@ public class AlbumArtFragment extends Fragment {
         public int getCount() {
             return localStationList.size();
         }
+
 
         @Override
         public boolean isViewFromObject(View view, Object object) {
@@ -259,7 +284,7 @@ public class AlbumArtFragment extends Fragment {
     }
 
 
-    private void assignBackground(ImageView imageView, Station station) {
+    private void assignBackground(final ImageView imageView, Station station) {
         // find a bitmap and assign it to 'bm'
         String bgUrl;
 
@@ -268,10 +293,25 @@ public class AlbumArtFragment extends Fragment {
         } catch (ClassCastException e) {
             bgUrl = null;
         }
+        Target target = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                Drawable d = new BitmapDrawable(getResources(), bitmap);
+                imageView.setBackground(d);
+                imageView.setImageDrawable(getResources().getDrawable(R.drawable.gradient));
+            }
 
-        if (bgUrl != null && imageView != null) {
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+            }
 
-            Glide.with(this).load(bgUrl).centerCrop().into(imageView);
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+            }
+        };
+        if (bgUrl != null && imageView != null && !bgUrl.isEmpty()) {
+
+            Picasso.with(getContext()).load(bgUrl).resize(400,400).centerCrop().into(target);
 
         } else if(imageView != null)
         {

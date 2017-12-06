@@ -6,6 +6,7 @@
     android:padding="15dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -18,11 +19,12 @@
 
         <ImageButton
             android:id="@+id/playSongOnDemand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:scaleType="fitXY"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/semi_transparent_circle"
+            android:background="@android:color/transparent"
             android:src="@drawable/play_white" />
     </RelativeLayout>
 
@@ -64,7 +66,7 @@
                 android:scaleType="centerCrop"
                 android:background="#00000000"
                 android:tint="@android:color/darker_gray"
-                android:src="@drawable/ic_like_unfilled_black"
+                android:src="@drawable/like_unfilled_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -74,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:background="#00000000"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_dislike_unfilled_black"
+                android:src="@drawable/dislike_unfilled_black"
                 android:tint="@android:color/darker_gray" />
         </LinearLayout>
     </RelativeLayout>

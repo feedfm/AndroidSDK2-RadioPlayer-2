@@ -2,17 +2,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="fm.feed.androidsdk2.richplayer.StationsFragment">
-    <include layout="@layout/toolbar"/>
 
     <GridView
-
+        android:layout_marginTop="10dp"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
         android:id="@+id/station_grid"
         android:numColumns="2"
-        android:layout_below="@id/toolbar"
+        android:layout_above="@+id/powered_by"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
+    <TextView
+        android:id="@+id/powered_by"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:text="Powered by Feed.fm"
+        android:textSize="12sp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textAlignment="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </RelativeLayout>

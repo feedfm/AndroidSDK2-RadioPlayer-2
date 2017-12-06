@@ -64,7 +64,7 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_like_unfilled_black"
+        android:src="@drawable/like_unfilled_black"
     />
 
     <ImageButton
@@ -73,7 +73,7 @@
         android:layout_marginLeft="10dp"
         android:background="#00000000"
         android:tint="@color/mild_grey"
-        android:src="@drawable/ic_dislike_unfilled_black"
+        android:src="@drawable/dislike_unfilled_black"
         android:layout_width="25dp"
         android:scaleType="fitXY"
         android:layout_height="25dp" />

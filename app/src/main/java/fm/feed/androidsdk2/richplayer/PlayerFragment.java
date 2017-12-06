@@ -2,36 +2,23 @@ package fm.feed.androidsdk2.richplayer;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 
 import butterknife.BindView;
-import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fm.feed.android.playersdk.FeedAudioPlayer;
@@ -52,6 +39,7 @@ public class PlayerFragment extends Fragment  {
     Context mContext;
     private int mStationID;
     Station mStation;
+    boolean isNew = false;
     FragmentManager mFragmentManager;
 
     @BindView(R.id.powered_by_feed)   TextView textView;
@@ -63,9 +51,6 @@ public class PlayerFragment extends Fragment  {
     @BindView(R.id.skipButton)        ImageButton skipButton;
     @BindView(R.id.buffering_spinner) ProgressBar bufferingBar;
     @BindView(R.id.historyButton)     ImageButton playHistory;
-    @BindView(R.id.toolbar)           Toolbar toolbar;
-    @BindView(R.id.back_button)       ImageButton backButton;
-    @BindView(R.id.toolbar_title)     TextView toolbarTitle;
     @BindView(R.id.onDemandButton)    ImageButton onDemandButton;
 
     @OnClick(R.id.likeButton)
@@ -111,20 +96,23 @@ public class PlayerFragment extends Fragment  {
     @OnClick(R.id.powered_by_feed)
     public void poweredByFeed()
     {
-        mListener.onClickPoweredBy();
+        Intent ai = new Intent(getContext(), PoweredByFeedActivity.class);
+        startActivity(ai);
     }
 
 
     @OnClick(R.id.historyButton)
     public void showHistory()
     {
-            FragmentManager manager = getChildFragmentManager();
+        FragmentManager manager = getChildFragmentManager();
+        if(manager.getBackStackEntryCount() == 0) {
             PlayHistoryFragment fragment = new PlayHistoryFragment();
             //OnDemandFragment fragment = new OnDemandFragment();
             FragmentTransaction transaction = manager.beginTransaction();
-            transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down);
+            transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down,R.anim.slide_in_up, R.anim.slide_out_down );
             transaction.addToBackStack(StationsFragment.class.getSimpleName());
             transaction.replace(R.id.container_view, fragment).commit();
+        }
     }
 
     @OnClick(R.id.onDemandButton)
@@ -141,23 +129,23 @@ public class PlayerFragment extends Fragment  {
         @Override
         public void onStateChanged(FeedAudioPlayer.State state) {
 
-            if(state == FeedAudioPlayer.State.PLAYING)
-            {
-                playPauseButton.setVisibility(View.VISIBLE);
-                bufferingBar.setVisibility(View.INVISIBLE);
-                playPauseButton.setImageResource(R.drawable.pause_black);
-            }
-            else if(state == FeedAudioPlayer.State.PAUSED)
-            {
-                playPauseButton.setVisibility(View.VISIBLE);
-                bufferingBar.setVisibility(View.INVISIBLE);
-                playPauseButton.setImageResource(R.drawable.play_black);
-            }
-            else if(state == FeedAudioPlayer.State.STALLED)
-            {
-                playPauseButton.setVisibility(View.INVISIBLE);
-                bufferingBar.setVisibility(View.VISIBLE);
-            }
+        if(state == FeedAudioPlayer.State.PLAYING)
+        {
+            playPauseButton.setVisibility(View.VISIBLE);
+            bufferingBar.setVisibility(View.INVISIBLE);
+            playPauseButton.setImageResource(R.drawable.pause_black);
+        }
+        else if(state == FeedAudioPlayer.State.PAUSED)
+        {
+            playPauseButton.setVisibility(View.VISIBLE);
+            bufferingBar.setVisibility(View.INVISIBLE);
+            playPauseButton.setImageResource(R.drawable.play_black);
+        }
+        else if(state == FeedAudioPlayer.State.STALLED)
+        {
+            playPauseButton.setVisibility(View.INVISIBLE);
+            bufferingBar.setVisibility(View.VISIBLE);
+        }
 
         }
     };
@@ -167,9 +155,11 @@ public class PlayerFragment extends Fragment  {
         public void onStationChanged(Station station) {
             if(station.getAudioFiles() != null) {
                 onDemandButton.setVisibility(View.VISIBLE);
+                playHistory.setVisibility(View.GONE);
             }
             else {
                 onDemandButton.setVisibility(View.GONE);
+                playHistory.setVisibility(View.VISIBLE);
             }
             mStation = station;
             mStationID = station.getId();
@@ -201,12 +191,12 @@ public class PlayerFragment extends Fragment  {
         @Override
         public void onLikeStatusChanged(AudioFile audioFile) {
             if (audioFile.isDisliked()) {
-                dislikeButton.setImageResource(R.drawable.ic_dislike_filled_black);
+                dislikeButton.setImageResource(R.drawable.dislike_filled_black);
             } else if (audioFile.isLiked()) {
-                likeButton.setImageResource(R.drawable.ic_like_filled_black);
+                likeButton.setImageResource(R.drawable.like_filled_black);
             } else {
-                likeButton.setImageResource(R.drawable.ic_like_unfilled_black);
-                dislikeButton.setImageResource(R.drawable.ic_dislike_unfilled_black);
+                likeButton.setImageResource(R.drawable.like_unfilled_black);
+                dislikeButton.setImageResource(R.drawable.dislike_unfilled_black);
             }
         }
     };
@@ -238,7 +228,7 @@ public class PlayerFragment extends Fragment  {
             bufferingBar.setVisibility(View.INVISIBLE);
             if(!b)
             {
-                Toast.makeText(mContext, "Skip Limit reached!" , Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Skip Limit reached!" , Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -269,15 +259,20 @@ public class PlayerFragment extends Fragment  {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_player, container, false);
         ButterKnife.bind(this, view);
+        setRetainInstance(true);
+        if(((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Now playing");
+        }
 
         FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
             @Override
             public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
                 mPlayer = feedAudioPlayer;
+                mPlayer.setCrossFadeInEnabled(true);
                 mPlayer.addPlayListener(playListener);
                 mPlayer.addStationChangedListener(stationChangedListener);
                 mPlayer.addStateListener(stateListener);
@@ -285,32 +280,34 @@ public class PlayerFragment extends Fragment  {
                 mPlayer.addUnhandledErrorListener(errorListener);
                 mPlayer.addOutOfMusicListener(outOfMusicListener);
                 mPlayer.addSkipListener(skipListener);
+
                 mStation = MainActivity.getStationById(mStationID, mPlayer.getStationList());
                 if(mStation!=null && mStation.getAudioFiles() != null) {
+                    if (savedInstanceState == null && !isNew) {
+                        isNew = true;
+                        mListener.OnDemandButtonClicked(mStationID);
+                        // Do this code only first time, not after rotation or reuse fragment from backstack
+                    }
+
                     onDemandButton.setVisibility(View.VISIBLE);
+                    playHistory.setVisibility(View.GONE);
                 }
                 else {
+                    isNew = true;
+                    mPlayer.play();
                     onDemandButton.setVisibility(View.GONE);
+                    playHistory.setVisibility(View.VISIBLE);
                 }
                 stateListener.onStateChanged(feedAudioPlayer.getState());
             }
 
             @Override
             public void onPlayerUnavailable(Exception e) {
-                Toast.makeText(mContext, "Unexpected error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Unexpected error", Toast.LENGTH_SHORT).show();
             }
         });
 
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(getActivity() != null)
-                {
-                    getActivity().onBackPressed();
-                }
-            }
-        });
-        toolbarTitle.setText("Now Playing");
+
         mFragmentManager = getChildFragmentManager();
         AlbumArtFragment fragment = AlbumArtFragment.newInstance(mStationID);
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
@@ -323,8 +320,6 @@ public class PlayerFragment extends Fragment  {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mContext = context;
-
         if (context instanceof OnPlayerFragmentInteractionListener) {
             mListener = (OnPlayerFragmentInteractionListener) context;
         } else {
@@ -337,11 +332,9 @@ public class PlayerFragment extends Fragment  {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        mContext = null;
     }
 
     public interface OnPlayerFragmentInteractionListener {
-        void onClickPoweredBy();
         void OnDemandButtonClicked(int newStationID);
     }
 }

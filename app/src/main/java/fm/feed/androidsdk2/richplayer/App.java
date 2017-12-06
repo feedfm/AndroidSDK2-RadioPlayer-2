@@ -11,8 +11,6 @@ import fm.feed.android.playersdk.FeedPlayerService;
 
 public class App extends Application {
 
-
-    FeedAudioPlayer feedAudioPlayer = null;
     @Override
     public void onCreate() {
         super.onCreate();

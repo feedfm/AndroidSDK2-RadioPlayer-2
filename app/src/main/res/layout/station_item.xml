@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout
         android:id="@+id/station_frame"
         android:layout_marginTop="20dp"
@@ -15,6 +16,19 @@
             android:layout_height="150dp"
             android:scaleType="centerCrop"/>
 
+        <fm.feed.androidsdk2.richplayer.CircularProgressView
+            android:id="@+id/circular_progress"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="invisible"
+            android:layout_marginTop="68dp"
+            app:cpv_animAutostart="true"
+            app:cpv_color="@color/my_accent_material_light"
+            app:cpv_progress="0"
+            app:cpv_thickness="8dp" />
+        
         <ImageView
             android:id="@+id/play_station"
             android:src="@drawable/play_white"
@@ -38,7 +52,7 @@
     <TextView
         android:id="@+id/station_type"
         android:layout_below="@+id/station_name"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </RelativeLayout>

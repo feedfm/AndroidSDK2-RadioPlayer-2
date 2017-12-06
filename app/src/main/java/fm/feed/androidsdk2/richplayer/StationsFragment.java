@@ -1,11 +1,13 @@
 package fm.feed.androidsdk2.richplayer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -18,13 +20,16 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import fm.feed.android.playersdk.FeedAudioPlayer;
+import fm.feed.android.playersdk.FeedPlayerService;
+import fm.feed.android.playersdk.models.Play;
 import fm.feed.android.playersdk.models.Station;
 
 
@@ -35,16 +40,22 @@ public class StationsFragment extends Fragment {
     private StationSelectionListener mListener;
 
     public StationsFragment() {
+
     }
 
     @BindView(R.id.station_grid)
     GridView gridView;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
 
-    @BindView(R.id.toolbar_title)
-    TextView toolbarTitle;
+    @BindView(R.id.powered_by)
+    TextView powered_by;
+    StationAdaptor stationAdaptor;
+    FeedAudioPlayer feedAudioPlayer;
 
+    @OnClick(R.id.powered_by)
+    public void onPoweredBy(){
+        Intent ai = new Intent(getContext(), PoweredByFeedActivity.class);
+        startActivity(ai);
+    }
 
 
     @Override
@@ -53,28 +64,87 @@ public class StationsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_station, container, false);
         ButterKnife.bind(this, view);
-        toolbarTitle.setText("Stations");
-        StationAdaptor stationAdaptor = new StationAdaptor(((MainActivity)getActivity()).feedAudioPlayer.getStationList(), inflater, gridView);
-        gridView.setAdapter(stationAdaptor);
-        Resources r = getResources();
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, r.getDisplayMetrics());
-        gridView.setHorizontalSpacing((int)px);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        if(((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Stations");
+        }
+        FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onPlayerAvailable(FeedAudioPlayer audioPlayer) {
+                feedAudioPlayer = audioPlayer;
+                stationAdaptor = new StationAdaptor(feedAudioPlayer.getStationList(), inflater, gridView);
+                Station station = feedAudioPlayer.getActiveStation();
+                stationChangedListener.onStationChanged(station);
+                feedAudioPlayer.addStationChangedListener(stationChangedListener);
+                feedAudioPlayer.addStateListener(stateListener);
+                feedAudioPlayer.addPlayListener(playListener);
 
-                onStationSelected(l);
+                gridView.setAdapter(stationAdaptor);
+                Resources r = getResources();
+                float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, r.getDisplayMetrics());
+                gridView.setHorizontalSpacing((int)px);
+                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                        onStationSelected(l);
+                    }
+                });
+
+                feedAudioPlayer.getStationList();
+
+            }
+
+            @Override
+            public void onPlayerUnavailable(Exception e) {
+
             }
         });
-        ((MainActivity)getActivity()).feedAudioPlayer.getStationList();
 
         return view;
     }
+
+    FeedAudioPlayer.StationChangedListener stationChangedListener = new FeedAudioPlayer.StationChangedListener() {
+        @Override
+        public void onStationChanged(Station station) {
+            stationAdaptor.setActiveStation();
+        }
+    };
+
+    FeedAudioPlayer.StateListener stateListener = new FeedAudioPlayer.StateListener() {
+        @Override
+        public void onStateChanged(FeedAudioPlayer.State state) {
+            if(state == FeedAudioPlayer.State.PLAYING){
+                stationAdaptor.setIsPlaying(true);
+            }
+            else
+            {
+                stationAdaptor.setIsPlaying(false);
+            }
+        }
+    };
+
+    FeedAudioPlayer.PlayListener playListener = new FeedAudioPlayer.PlayListener() {
+        @Override
+        public void onSkipStatusChanged(boolean b) {
+
+        }
+
+        @Override
+        public void onProgressUpdate(Play play, float v, float v1) {
+
+                stationAdaptor.setProgress(v, v1);
+        }
+
+        @Override
+        public void onPlayStarted(Play play) {
+
+        }
+    };
 
     public class StationAdaptor extends BaseAdapter {
 
@@ -82,10 +152,34 @@ public class StationsFragment extends Fragment {
         LayoutInflater layoutInflater;
         ViewGroup container;
 
+        // Not sure if this is a good idea but better then redrawing the whole grid every time progress changes
+        CircularProgressView circularProgressView;
+
         StationAdaptor(List<Station> list, LayoutInflater inflater, ViewGroup container){
             stationList = list;
             layoutInflater = inflater;
             this.container = container;
+        }
+
+        public void setActiveStation() {
+            this.notifyDataSetInvalidated();
+        }
+
+        public void setIsPlaying(boolean playing) {
+            if(circularProgressView != null) {
+                circularProgressView.isPlaying(playing);
+                this.notifyDataSetInvalidated();
+            }
+        }
+
+        public void setProgress(float progress1, float maxProgress)
+        {
+            //progress = progress1;
+            if(circularProgressView != null && circularProgressView.getVisibility() == View.VISIBLE)
+            {
+                circularProgressView.setMaxProgress(maxProgress);
+                circularProgressView.setProgress(progress1);
+            }
         }
 
         @Override
@@ -118,11 +212,34 @@ public class StationsFragment extends Fragment {
             if(stationList.get(i).containsOption("subheader")) {
                 holder.stationType.setText(stationList.get(i).getOption("subheader").toString());
             }
+
+            if((feedAudioPlayer.getState().equals(FeedAudioPlayer.State.PLAYING) || feedAudioPlayer.getState().equals(FeedAudioPlayer.State.PAUSED)) &&(stationList.get(i).getId().equals(feedAudioPlayer.getActiveStation().getId()))){
+                if(feedAudioPlayer.getState().equals(FeedAudioPlayer.State.PLAYING)) {
+                    holder.circularProgressView.isPlaying(true);
+                }
+                else if(feedAudioPlayer.getState().equals(FeedAudioPlayer.State.PAUSED))
+                {
+                    holder.circularProgressView.isPlaying(false);
+                }
+                holder.playWhite.setVisibility(View.GONE);
+                holder.circularProgressView.setVisibility(View.VISIBLE);
+                holder.circularProgressView.setMaxProgress(feedAudioPlayer.getCurrentPlayDuration());
+                holder.circularProgressView.setProgress(feedAudioPlayer.getCurrentPlaybackTime());
+                this.circularProgressView = holder.circularProgressView;
+            }
+            else {
+                holder.playWhite.setVisibility(View.VISIBLE);
+                holder.circularProgressView.setVisibility(View.INVISIBLE);
+            }
             assignArtWork(stationList.get(i), holder.stationImage);
             return view;
         }
 
         class ViewHolder {
+            @BindView(R.id.play_station)
+            ImageView playWhite;
+            @BindView(R.id.circular_progress)
+            CircularProgressView circularProgressView;
             @BindView(R.id.station_image_view)
             ImageView stationImage;
             @BindView(R.id.station_name)
@@ -147,9 +264,9 @@ public class StationsFragment extends Fragment {
             bgUrl = null;
         }
 
-        if (bgUrl != null) {
+        if (bgUrl != null && !bgUrl.isEmpty()) {
 
-            Glide.with(this).load(bgUrl).centerCrop().into(imageView);
+            Picasso.with(getContext()).load(bgUrl).resize(400, 400).centerCrop().into(imageView);
 
         } else {
 

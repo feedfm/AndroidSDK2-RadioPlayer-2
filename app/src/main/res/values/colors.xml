@@ -7,7 +7,7 @@
     <color name="my_primary_material_light">#ffffff</color>
     <color name="my_accent_material_light">#80cba1</color>
     <color name="my_foreground_material_light">#00000000</color>
-    <color name="status_bar_color">#000000</color>
+    <color name="status_bar_color">#69a885</color>
     <color name="mild_grey">#e0e0e0</color>
 
     <color name="history_background">#3b3b3b</color>
