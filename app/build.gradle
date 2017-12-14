@@ -40,6 +40,6 @@ dependencies {
 
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'fm.feed.android:player-sdk:5.0.17-SNAPSHOT'
+    compile 'fm.feed.android:player-sdk:5.0.3-SNAPSHOT'
 
 }

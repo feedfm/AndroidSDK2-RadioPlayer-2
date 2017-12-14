@@ -2,13 +2,32 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
+    android:layout_height="96dp"
     android:orientation="horizontal"
     android:background="@android:color/black"
     >
+    <ImageView
+        android:id="@+id/notification_icon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:scaleType="centerCrop"
+        android:layout_marginRight="16dp"
+        android:layout_gravity="center_vertical"
+        />
 
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:indeterminate="true"
+        android:layout_marginRight="16dp"
+        android:layout_gravity="center_vertical"
+        android:visibility="gone"
+        />
 
     <LinearLayout
+
+        android:padding="10dp"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
@@ -53,6 +72,29 @@
 
 
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/play_pause_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/play_pause_button"
+        />
+
+    <ImageButton
+        android:id="@+id/skip_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/skip_button"
+        />
+
 
 
 

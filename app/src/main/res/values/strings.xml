@@ -12,5 +12,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dislike_button">Dislike button</string>
+    <string name="like_button">Like button</string>
+    <string name="skip_button">Skip button</string>
+    <string name="play_pause_button">Play Pause Button</string>
 
 </resources>

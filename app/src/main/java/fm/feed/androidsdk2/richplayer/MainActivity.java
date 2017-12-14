@@ -58,13 +58,13 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
             ab.setDisplayHomeAsUpEnabled(true);
         }
         final NotificationStyle ni = new NotificationStyle()
-                .setSmallIcon(R.drawable.notify_play_black)
-                .setPlayIcon(R.drawable.notify_play_black)
-                .setPauseIcon(R.drawable.notify_pause_black)
-                .setSkipIcon(R.drawable.notify_skip_black)
+                .setSmallIcon(R.drawable.play_white_15dp)
+                .setPlayIcon(R.drawable.play_white_15dp)
+                .setPauseIcon(R.drawable.pause_white_15dp)
+                .setSkipIcon(R.drawable.skip_white_15dp)
                 .setColor(Color.BLACK)
-                .setThumbsUpIcons(R.drawable.notify_like_unfilled_black, R.drawable.notify_like_filled_black)
-                .setThumbsDownIcons(R.drawable.notify_dislike_unfilled_black, R.drawable.notify_dislike_filled_black)
+                .setThumbsUpIcons(R.drawable.like_unfilled_white_15pt, R.drawable.like_filled_white_15pt)
+                .setThumbsDownIcons(R.drawable.dislike_unfilled_white_15pt, R.drawable.dislike_filled_white_15pt)
 
                 // .. and our custom notification layouts
                 .setBigContentView(getPackageName(), R.layout.notification_small)
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
                 .setProgressId(R.id.progress)
                 .setDislikeButtonId(R.id.dislike_button)
                 .setLikeButtonId(R.id.like_button)
-                .setPlayPauseButtonId(R.id.play_pause_notifi_button)
+                .setPlayPauseButtonId(R.id.play_pause_button)
                 .setSkipButtonId(R.id.skip_button)
                 .setTrackTextId(R.id.notification_track_title)
                 .setArtistTextId(R.id.notification_track_artist)

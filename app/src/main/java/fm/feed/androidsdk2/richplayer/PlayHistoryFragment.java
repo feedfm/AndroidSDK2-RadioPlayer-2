@@ -31,13 +31,9 @@ import java.util.List;
 
 /**
  * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link PlayHistoryListener}
- * interface.
  */
 public class PlayHistoryFragment extends Fragment {
 
-    PlayHistoryListener mListener;
     List<Station> stationList;
     @BindView(R.id.historyList)
     ExpandableListView listView;
@@ -75,7 +71,7 @@ public class PlayHistoryFragment extends Fragment {
                 feedAudioPlayer = aFeedAudioPlayer;
                 stationList =  feedAudioPlayer.getStationList();
                 feedAudioPlayer.addPlayListener(playListener);
-
+                feedAudioPlayer.addLikeStatusChangeListener(likeStatusChangeListener);
                 adapter = new PlayHistoryAdapter(feedAudioPlayer.getPlayHistory(), inflater);
                 listView.setAdapter(adapter);
                 int count = adapter.getGroupCount();
@@ -92,7 +88,6 @@ public class PlayHistoryFragment extends Fragment {
         });
 
         // Set the adapter
-
         return view;
     }
 
@@ -116,18 +111,19 @@ public class PlayHistoryFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof PlayHistoryListener) {
-            mListener = (PlayHistoryListener) context;
-        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnListFragmentInteractionListener");
-        }
+
     }
+
+    FeedAudioPlayer.LikeStatusChangeListener likeStatusChangeListener = new FeedAudioPlayer.LikeStatusChangeListener() {
+        @Override
+        public void onLikeStatusChanged(AudioFile audioFile) {
+            adapter.setNewData(feedAudioPlayer.getPlayHistory());
+        }
+    };
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     public List<PlayByStations> separatePlaysByStations(List<Play> plays){
@@ -143,7 +139,6 @@ public class PlayHistoryFragment extends Fragment {
                     isAdded = true;
                 }
             }
-
             if(!isAdded)
             {
                PlayByStations pbS =  new PlayByStations();
@@ -170,7 +165,7 @@ public class PlayHistoryFragment extends Fragment {
             this.inflater = inflater;
         }
 
-        public void setNewData(List<Play> list) {
+        void setNewData(List<Play> list) {
             playHistory = separatePlaysByStations(list);
             this.notifyDataSetChanged();
         }
@@ -305,7 +300,4 @@ public class PlayHistoryFragment extends Fragment {
         }
     }
 
-    public interface PlayHistoryListener {
-        // TODO: Update argument type and name
-    }
 }

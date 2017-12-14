@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.os.Handler;
 import android.view.View;
 
 /**
@@ -53,6 +54,10 @@ public class CircularProgressView extends View {
     int eqRows = 8;
     private int size = 0;
     private boolean isPlaying = false;
+
+
+
+    private boolean isInDeterminateAnim = true;
     private Bitmap playBitmap;
 
     private RectF bounds;
@@ -77,6 +82,9 @@ public class CircularProgressView extends View {
     private AnimatorSet indeterminateAnimator;
     private float initialStartAngle;
     private boolean isVisualizerDirty = true;
+
+    private Handler handler = new Handler();
+
 
     public CircularProgressView(Context context) {
         super(context);
@@ -201,7 +209,7 @@ public class CircularProgressView extends View {
         int paddingTop = getPaddingTop();
         bounds.set(paddingLeft + thickness, paddingTop + thickness, size - paddingLeft - thickness, size - paddingTop - thickness);
 
-        // This defines the inset of visualizer, the actual value should be root 2 or 1.41 but 1.35 looks better here.
+        // This defines the inset of visualizer, the actual value should be root 2 or 1.41 but 1.35 looks better.
         float eqSize = (float)(size  / 1.35 );
 
         whiteCircleBounds.set(bounds);
@@ -261,8 +269,11 @@ public class CircularProgressView extends View {
 
         // Draw the arc
         float sweepAngle = (isInEditMode()) ? currentProgress/maxProgress*360 : actualProgress/maxProgress*360;
-        if(!isIndeterminate) {
-            canvas.drawOval(bounds,transparentPaint);
+        if(!isIndeterminate ) {
+            if(isInDeterminateAnim)
+            {
+                canvas.drawOval(bounds,transparentPaint);
+            }
             canvas.drawOval(whiteCircleBounds, whitePaint);
             canvas.drawArc(bounds, startAngle, sweepAngle, false, progressPaint);
 
@@ -300,8 +311,12 @@ public class CircularProgressView extends View {
             }
         }
         else {
-                        canvas.drawBitmap(playBitmap,bitMapRect.right , bitMapRect.bottom , whitePaint);
+            canvas.drawBitmap(playBitmap,bitMapRect.right , bitMapRect.bottom , whitePaint);
         }
+    }
+
+    public void setInDeterminateAnim(boolean indeterminateAnim) {
+        isInDeterminateAnim = indeterminateAnim;
     }
 
     /**
@@ -455,7 +470,7 @@ public class CircularProgressView extends View {
         }
 
         // Determinate animation
-        if(!isIndeterminate)
+        if(!isIndeterminate && isInDeterminateAnim)
         {
             // The cool 360 swoop animation at the start of the animation
             startAngle = initialStartAngle;
@@ -538,27 +553,24 @@ public class CircularProgressView extends View {
             indeterminateAnimator.cancel();
             indeterminateAnimator = null;
         }
-        if(timer !=null){
-            timer.cancel();
-            timer.purge();
-        }
+        handler.removeCallbacks(runnable);
     }
 
-    class UpdateBallTask extends TimerTask {
-
-        public void run() {
-            isVisualizerDirty = true;
-            invalidate();
-        }
-    }
 
     private void createVisualizerTimer(int delay){
 
-        timer = new Timer();
-        TimerTask updateVisual = new UpdateBallTask();
-        timer.scheduleAtFixedRate(updateVisual, delay, delay);
-
+        handler.removeCallbacks(runnable);
+        handler.postDelayed(runnable, delay);
     }
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            isVisualizerDirty = true;
+            handler.postDelayed(this, 300);
+            invalidate();
+        }
+    };
 
     // Creates the animators for one step of the animation
     private AnimatorSet createIndeterminateAnimator(float step)

@@ -45,6 +45,11 @@ public class OnDemandFragment extends Fragment {
     @BindView((R.id.station_art_demand))
     ImageView stationArt;
 
+    @BindView(R.id.station_demand_name)
+    TextView stationName;
+
+    FeedAudioPlayer mFeedAudioPlayer;
+
     public OnDemandFragment() {
         // Required empty public constructor
     }
@@ -73,10 +78,13 @@ public class OnDemandFragment extends Fragment {
         FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
             @Override
             public void onPlayerAvailable(final FeedAudioPlayer feedAudioPlayer) {
-
+                mFeedAudioPlayer = feedAudioPlayer;
                 assignStationBG(feedAudioPlayer.getActiveStation());
+                stationName.setText(feedAudioPlayer.getActiveStation().getName());
                 if(feedAudioPlayer.getActiveStation().getAudioFiles() != null) {
                     feedAudioPlayer.addPlayListener(playListener);
+                    feedAudioPlayer.addLikeStatusChangeListener(likeStatusChangeListener);
+                    feedAudioPlayer.addStateListener(stateListener);
                     mAdapter = new RecyclerAdapter(feedAudioPlayer.getActiveStation().getAudioFiles());
                     recyclerListView.setLayoutManager(new LinearLayoutManager(getContext()));
                     recyclerListView.setAdapter(mAdapter);
@@ -97,7 +105,6 @@ public class OnDemandFragment extends Fragment {
                                     break;
                                 case R.id.ondemand_like:
                                     feedAudioPlayer.like(file);
-
                             }
                         }
                     });
@@ -116,6 +123,19 @@ public class OnDemandFragment extends Fragment {
         return view;
     }
 
+    FeedAudioPlayer.StateListener stateListener = new FeedAudioPlayer.StateListener() {
+        @Override
+        public void onStateChanged(FeedAudioPlayer.State state) {
+            if(state == FeedAudioPlayer.State.PLAYING)
+            {
+                mAdapter.setPlaying(true);
+            }
+            else if(state == FeedAudioPlayer.State.PAUSED)
+            {
+                mAdapter.setPlaying(false);
+            }
+        }
+    };
 
     FeedAudioPlayer.PlayListener playListener = new FeedAudioPlayer.PlayListener() {
 
@@ -134,6 +154,13 @@ public class OnDemandFragment extends Fragment {
         }
     };
 
+    FeedAudioPlayer.LikeStatusChangeListener likeStatusChangeListener = new FeedAudioPlayer.LikeStatusChangeListener() {
+        @Override
+        public void onLikeStatusChanged(AudioFile audioFile) {
+            mAdapter.setUpdatedAudioFile(audioFile);
+        }
+    };
+
 
     public interface OnItemViewClickListener {
         void onItemClick(View view, int position, AudioFile file);
@@ -143,11 +170,48 @@ public class OnDemandFragment extends Fragment {
         private List<AudioFile> list;
         private  OnItemViewClickListener mItemClickListener;
         private String activePlayingID;
+        boolean isPlaying = true;
+
+
+        public void setPlaying(boolean playing) {
+            if(isPlaying != playing) {
+                isPlaying = playing;
+                notifyDataSetChanged();
+            }
+        }
 
         public void setActivePlayingID(String playingID) {
 
+            int i = 0, oldPos = 0, newPos = 0;
+            for(AudioFile file:list)
+            {
+                if(file.getId().equals(playingID))
+                {
+                    newPos = i;
+                }
+                if(file.getId().equals(activePlayingID))
+                {
+                    oldPos = i;
+                }
+                i++;
+            }
             this.activePlayingID = playingID;
-            mAdapter.notifyDataSetChanged();
+            mAdapter.notifyItemChanged(newPos);
+            mAdapter.notifyItemChanged(oldPos);
+        }
+
+        public void setUpdatedAudioFile(AudioFile file) {
+            int i = 0;
+            for (AudioFile audioFile:list) {
+                if(audioFile.equals(file))
+                {
+                    list.remove(i);
+                    list.add(i,file);
+                    notifyItemChanged(i);
+                    break;
+                }
+                i++;
+            }
         }
 
         public RecyclerAdapter(List<AudioFile> itemsData) {
@@ -180,11 +244,14 @@ public class OnDemandFragment extends Fragment {
                 viewHolder.likeButton.setImageResource(R.drawable.like_unfilled_black);
                 viewHolder.disLikeButton.setImageResource(R.drawable.dislike_unfilled_black);
             }
-            if(activePlayingID != null && activePlayingID.equals(list.get(position).getId())) {
-                viewHolder.playOnDemand.setVisibility(View.INVISIBLE);
+            if(activePlayingID != null && isPlaying && activePlayingID.equals(list.get(position).getId())) {
+                viewHolder.playOnDemand.setVisibility(View.GONE);
+                viewHolder.play_progress.setVisibility(View.VISIBLE);
+                viewHolder.play_progress.isPlaying(true);
             }
             else {
                 viewHolder.playOnDemand.setVisibility(View.VISIBLE);
+                viewHolder.play_progress.setVisibility(View.GONE);
             }
             assignArtWork(list.get(position) , viewHolder.imageView);
 
@@ -192,7 +259,8 @@ public class OnDemandFragment extends Fragment {
 
         // inner class to hold a reference to each item of RecyclerView
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-
+            @BindView(R.id.play_progress)
+            CircularProgressView play_progress;
             @BindView(R.id.ondemand_image)
             ImageView imageView;
             @BindView(R.id.ondemand_title)
@@ -212,12 +280,17 @@ public class OnDemandFragment extends Fragment {
                 likeButton.setOnClickListener(this);
                 playOnDemand.setOnClickListener(this);
                 disLikeButton.setOnClickListener(this);
+                play_progress.setInDeterminateAnim(false);
             }
+
 
             @Override
             public void onClick(View v) {
+                this.getAdapterPosition();
                 mItemClickListener.onItemClick(v, getAdapterPosition(), list.get(getAdapterPosition())); //OnItemViewClickListener mItemClickListener;
             }
+
+
         }
 
         public void SetOnItemClickListener(final OnItemViewClickListener mItemClickListener) {
@@ -264,7 +337,7 @@ public class OnDemandFragment extends Fragment {
     private void loadImage(String url, ImageView imageView){
 
         if (url != null && !url.isEmpty()) {
-            Picasso.with(getContext()).load(url).resize(300,200).centerCrop().into(imageView);
+            Picasso.with(getContext()).load(url).resize(300,250).centerCrop().into(imageView);
 
         } else {
             Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.default_station_background);

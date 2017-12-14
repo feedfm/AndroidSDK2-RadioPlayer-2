@@ -17,7 +17,21 @@
             android:layout_height="200dp"
             app:srcCompat="@drawable/default_station_background" />
 
+        <fm.feed.androidsdk2.richplayer.CircularProgressView
+            android:id="@+id/play_progress"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:visibility="visible"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            app:cpv_animAutostart="true"
+            app:cpv_color="@android:color/white"
+            app:cpv_progress="100"
+            app:cpv_thickness="8dp"
+            app:cpv_isPlaying="true"/>
+
         <ImageButton
+            android:visibility="invisible"
             android:id="@+id/playSongOnDemand"
             android:layout_width="70dp"
             android:layout_height="70dp"
@@ -64,16 +78,17 @@
             <ImageButton
                 android:id="@+id/ondemand_like"
                 android:scaleType="centerCrop"
-                android:background="#00000000"
+                android:background="@android:color/transparent"
+
                 android:tint="@android:color/darker_gray"
                 android:src="@drawable/like_unfilled_black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_width="36dp"
+                android:layout_height="36dp" />
 
             <ImageButton
                 android:id="@+id/ondemand_dislike"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:background="#00000000"
                 android:scaleType="centerCrop"
                 android:src="@drawable/dislike_unfilled_black"
