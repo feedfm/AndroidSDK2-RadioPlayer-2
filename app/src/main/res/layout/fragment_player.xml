@@ -14,17 +14,38 @@
         android:layout_weight="1">
     </FrameLayout>
 
-    <RelativeLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:id="@+id/controls"
-        android:layout_width="wrap_content"
-        android:layout_height="200dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom">
+        <TextView
+
+            android:textAlignment="center"
+            android:id="@+id/title_track"
+            android:layout_marginTop="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="Miracle Aligner"
+            android:textColor="#bf000000"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+        <TextView
+            android:id="@+id/artist_track"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:textColor="#99000000"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:text="The last shadow Puppets"
+            android:textAlignment="center" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
+            android:layout_gravity="center_horizontal"
             android:id="@+id/relativeLayout">
 
             <ProgressBar
@@ -34,6 +55,8 @@
                 android:layout_alignTop="@+id/play_pause_button"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginRight="12dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
@@ -41,25 +64,33 @@
                 android:background="#00000000"
                 android:id="@+id/play_pause_button"
                 android:src="@drawable/play_black"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="24dp"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginRight="12dp"
                 android:scaleType="fitXY"
+                android:tint="#bf000000"
+                android:tintMode="src_in"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
             <ImageButton
                 android:id="@+id/skipButton"
 
-                android:background="#00000000"
+                android:background="@android:color/transparent"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:contentDescription="dd"
+                android:contentDescription="@string/skip_button"
                 android:src="@drawable/skip_black"
                 android:layout_alignTop="@+id/play_pause_button"
                 android:scaleType="fitXY"
-                android:layout_marginLeft="30dp"
-                android:layout_marginStart="30dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginRight="12dp"
+                android:tint="#bf000000"
+                android:tintMode="src_in"
                 android:layout_toEndOf="@+id/play_pause_button"
                 android:layout_toRightOf="@+id/play_pause_button" />
 
@@ -68,11 +99,15 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_alignTop="@+id/play_pause_button"
-                android:background="#00000000"
+                android:background="@android:color/transparent"
                 android:scaleType="fitXY"
+                android:tint="#bf000000"
+                android:tintMode="src_in"
                 android:src="@drawable/playlist_history_black"
-                android:layout_marginLeft="25dp"
-                android:layout_marginStart="25dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginRight="12dp"
                 android:layout_toEndOf="@+id/dislikeButton"
                 android:layout_toRightOf="@+id/dislikeButton" />
 
@@ -81,11 +116,15 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_alignTop="@+id/play_pause_button"
-                android:background="#00000000"
+                android:background="@android:color/transparent"
                 android:scaleType="fitXY"
+                android:tint="#bf000000"
+                android:tintMode="src_in"
                 android:src="@drawable/playlist_history_ondemand_black"
-                android:layout_marginLeft="25dp"
-                android:layout_marginStart="25dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginRight="12dp"
                 android:visibility="gone"
                 android:layout_toEndOf="@+id/historyButton"
                 android:layout_toRightOf="@+id/historyButton" />
@@ -95,11 +134,15 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_alignTop="@+id/play_pause_button"
-                android:background="#00000000"
+                android:background="@android:color/transparent"
+                android:tint="#80000000"
+                android:tintMode="src_in"
                 android:scaleType="fitXY"
                 android:src="@drawable/dislike_unfilled_black"
-                android:layout_marginLeft="15dp"
-                android:layout_marginStart="15dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginRight="12dp"
                 android:layout_toEndOf="@+id/likeButton"
                 android:layout_toRightOf="@+id/likeButton" />
 
@@ -109,83 +152,58 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_alignTop="@+id/play_pause_button"
-                android:layout_marginLeft="30dp"
-                android:layout_marginStart="30dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginRight="12dp"
                 android:scaleType="fitXY"
                 android:layout_toEndOf="@+id/skipButton"
                 android:layout_toRightOf="@+id/skipButton"
+                android:tint="#80000000"
+                android:tintMode="src_in"
                 android:src="@drawable/like_unfilled_black" />
 
             <ImageView
-                android:layout_width="0.5dp"
+                android:layout_width="1dp"
                 android:layout_height="66dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginStart="15dp"
                 android:layout_toEndOf="@+id/skipButton"
                 android:layout_toRightOf="@+id/skipButton"
-                android:background="@color/mild_grey" />
+                android:background="@color/divider_grey" />
 
             <ImageView
-                android:layout_width="0.5dp"
+                android:layout_width="1dp"
                 android:layout_height="66dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginStart="15dp"
                 android:layout_toEndOf="@+id/dislikeButton"
                 android:layout_toRightOf="@+id/dislikeButton"
-                android:background="@color/mild_grey" />
+                android:background="@color/divider_grey" />
 
             <ImageView
-                android:layout_width="0.5dp"
+                android:layout_width="1dp"
                 android:layout_height="66dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginStart="15dp"
                 android:layout_toEndOf="@+id/play_pause_button"
                 android:layout_toRightOf="@+id/play_pause_button"
-                android:background="@color/mild_grey" />
+                android:background="@color/divider_grey" />
 
             <ImageView
-                android:background="@color/mild_grey"
-                android:layout_marginLeft="15dp"
-                android:layout_marginStart="15dp"
+                android:background="@color/divider_grey"
                 android:layout_toEndOf="@+id/dislikeButton"
                 android:layout_toRightOf="@+id/dislikeButton"
-                android:layout_width="0.5dp"
+                android:layout_width="1dp"
                 android:layout_height="66dp" />
             </RelativeLayout>
 
-        <TextView
 
-            android:textAlignment="center"
-            android:id="@+id/title_track"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/artist_track"
-            android:text="Miracle Aligner"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
-
-        <TextView
-            android:id="@+id/artist_track"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/relativeLayout"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginBottom="10dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:text="The last shadow Puppets"
-            android:textAlignment="center" />
 
         <TextView
             android:id="@+id/powered_by_feed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/relativeLayout"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="15dp"
             android:text="Powered by Feed.fm"
             android:textSize="12sp"
+            android:textColor="#80000000"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textAlignment="center" />
-    </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

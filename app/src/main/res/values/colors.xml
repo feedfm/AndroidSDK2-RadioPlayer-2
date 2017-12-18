@@ -9,7 +9,7 @@
     <color name="my_foreground_material_light">#00000000</color>
     <color name="status_bar_color">#69a885</color>
     <color name="mild_grey">#e0e0e0</color>
-
+    <color name="divider_grey">#e5e5e5</color>#e5e5e5
     <color name="history_background">#3b3b3b</color>
     <color name="history_dark_background">#262626</color>
 

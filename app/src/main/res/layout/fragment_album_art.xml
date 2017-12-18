@@ -31,10 +31,7 @@
 
         <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -44,10 +41,11 @@
 
             <ImageButton
                 android:id="@+id/viewStations"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:layout_gravity="center"
                 android:scaleType="fitXY"
+                android:backgroundTint="#33000000"
                 android:background="@android:color/transparent"
                 android:src="@drawable/station_black" />
 
@@ -57,10 +55,8 @@
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:layout_alignParentEnd="true"
-             android:layout_alignParentRight="true"
-             android:layout_marginEnd="10dp"
-             android:layout_marginRight="10dp"
-             android:layout_marginTop="10dp">
+             android:layout_alignParentRight="true" >
+
              <ImageView
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
@@ -69,9 +65,10 @@
 
              <ImageButton
                  android:id="@+id/shareButton"
-                 android:layout_width="24dp"
-                 android:layout_height="24dp"
+                 android:layout_width="15dp"
+                 android:layout_height="15dp"
                  android:layout_gravity="center"
+                 android:backgroundTint="#33000000"
                  android:background="@android:color/transparent"
                  android:scaleType="fitXY"
                  android:src="@drawable/share_black" />
@@ -83,7 +80,7 @@
          android:orientation="vertical"
          android:layout_alignParentBottom="true"
          android:layout_alignParentLeft="true"
-         android:layout_marginBottom="30dp"
+         android:layout_marginBottom="20dp"
          android:layout_alignParentStart="true"
          >
          <TextView
@@ -94,7 +91,7 @@
              android:textAlignment="center"
              android:textAppearance="@style/Widget.AppCompat.Button.Borderless.Colored"
              android:textColor="@android:color/white"
-             android:textSize="16sp" />
+             android:textSize="10sp" />
 
          <TextView
              android:id="@+id/station_name_player"
@@ -105,7 +102,7 @@
              android:textStyle="bold"
              android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
              android:textColor="@android:color/white"
-             android:textSize="22sp" />
+             android:textSize="20sp" />
 
          <TextView
              android:id="@+id/station_description_player"
@@ -115,7 +112,8 @@
              android:layout_marginStart="50dp"
              android:layout_marginEnd="50dp"
              android:layout_marginRight="50dp"
-             android:maxLines="2"
+             android:singleLine="true"
+             android:ellipsize="marquee"
              android:text="Kittens and sharks"
              android:textAlignment="center"
              android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
@@ -127,8 +125,8 @@
 
         <ImageButton
 
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
             android:layout_marginRight="10dp"
             android:layout_marginEnd="10dp"
             android:id="@+id/previousStation"
@@ -144,9 +142,8 @@
         <ImageButton
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
-
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
             android:id="@+id/nextStation"
             android:layout_width="24dp"
             android:layout_height="24dp"
@@ -154,12 +151,12 @@
             android:layout_above="@+id/progressBar"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="20dp"
             android:background="@android:color/transparent"
             android:src="@drawable/arrow_right_white" />
 
         <ProgressBar
-            android:background="#60000000"
+            android:background="#33FFFFFF"
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
