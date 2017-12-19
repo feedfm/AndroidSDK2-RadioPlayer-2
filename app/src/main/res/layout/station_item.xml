@@ -18,33 +18,53 @@
 
         <fm.feed.androidsdk2.richplayer.CircularProgressView
             android:id="@+id/circular_progress"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:visibility="invisible"
-            android:layout_marginTop="68dp"
             app:cpv_animAutostart="true"
             app:cpv_color="@color/my_accent_material_light"
             app:cpv_progress="0"
-            app:cpv_thickness="8dp" />
-        
-        <ImageView
-            android:id="@+id/play_station"
-            android:src="@drawable/play_white"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
+            app:cpv_thickness="4dp" />
+
+
+        <RelativeLayout
+
+            android:id="@+id/play_station_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:contentDescription="Play Station"
-            android:visibility="visible" />
+            android:layout_centerVertical="true">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content"
+                android:src="@drawable/round_white_button"/>
+
+            <ImageButton
+                android:id="@+id/play_station"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center"
+
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:scaleType="fitXY"
+                android:backgroundTint="#33000000"
+                android:background="@android:color/transparent"
+                android:src="@drawable/play_black" />
+
+        </RelativeLayout>
+
     </RelativeLayout>
 
 
     <TextView
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="12dp"
         android:id="@+id/station_name"
         android:layout_below="@+id/station_frame"
+        android:textSize="15sp"
+        android:textColor="#d9000000"
         android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -52,7 +72,10 @@
     <TextView
         android:id="@+id/station_type"
         android:layout_below="@+id/station_name"
+        android:textSize="12sp"
+        android:textColor="#B3000000"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="wrap_content"
+        android:layout_marginBottom="10dp"
         android:layout_height="wrap_content" />
 </RelativeLayout>

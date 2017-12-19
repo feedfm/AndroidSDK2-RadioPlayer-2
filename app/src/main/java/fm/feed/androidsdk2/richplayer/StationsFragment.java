@@ -18,6 +18,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -198,7 +199,7 @@ public class StationsFragment extends Fragment {
         }
 
         @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
+        public View getView(final int i, View view, ViewGroup viewGroup) {
 
             ViewHolder holder;
             if (view != null) {
@@ -231,13 +232,23 @@ public class StationsFragment extends Fragment {
                 holder.playWhite.setVisibility(View.VISIBLE);
                 holder.circularProgressView.setVisibility(View.INVISIBLE);
             }
+            View.OnClickListener listener = new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onStationSelected(getItemId(i));
+                }
+            };
+            holder.playWhite.setOnClickListener(listener);
+            holder.circularProgressView.setOnClickListener(listener);
+            holder.stationImage.setOnClickListener(listener);
+            holder.play.setOnClickListener(listener);
             assignArtWork(stationList.get(i), holder.stationImage);
             return view;
         }
 
         class ViewHolder {
-            @BindView(R.id.play_station)
-            ImageView playWhite;
+            @BindView(R.id.play_station_layout)
+            RelativeLayout playWhite;
             @BindView(R.id.circular_progress)
             CircularProgressView circularProgressView;
             @BindView(R.id.station_image_view)
@@ -246,6 +257,8 @@ public class StationsFragment extends Fragment {
             TextView stationName;
             @BindView(R.id.station_type)
             TextView stationType;
+            @BindView(R.id.play_station)
+            ImageView play;
             ViewHolder(View view){
                 ButterKnife.bind(this, view);
             }

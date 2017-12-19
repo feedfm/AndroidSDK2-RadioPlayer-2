@@ -50,8 +50,8 @@ public class CircularProgressView extends View {
     private Paint whitePaint;
     private Paint transparentPaint;
 
-    int eqCols = 8;
-    int eqRows = 8;
+    int eqCols = 5;
+    int eqRows = 5;
     private int size = 0;
     private boolean isPlaying = false;
 
@@ -204,7 +204,8 @@ public class CircularProgressView extends View {
     private void updateBounds()
     {
 
-        int spacing = 5;
+        int spacing = 2;
+        int inset = 2;
         int paddingLeft = getPaddingLeft();
         int paddingTop = getPaddingTop();
         bounds.set(paddingLeft + thickness, paddingTop + thickness, size - paddingLeft - thickness, size - paddingTop - thickness);
@@ -216,7 +217,7 @@ public class CircularProgressView extends View {
         whiteCircleBounds.inset(thickness/2, thickness/2);
 
         eqBounds.set(bounds);
-        eqBounds.inset(size - eqSize/2, size - eqSize/2);
+        eqBounds.inset(size - eqSize/2 , size - eqSize/2 );
 
         float a = (eqBounds.left - eqBounds.right )/ eqCols;
         float b = (eqBounds.top - eqBounds.bottom)/ eqRows;
@@ -250,6 +251,7 @@ public class CircularProgressView extends View {
         progressPaint.setStrokeCap(Paint.Cap.BUTT);
 
         blackPaint.setColor(Color.BLACK);
+        blackPaint.setAlpha(180);
         blackPaint.setStyle(Paint.Style.FILL);
 
         whitePaint.setStyle(Paint.Style.FILL);

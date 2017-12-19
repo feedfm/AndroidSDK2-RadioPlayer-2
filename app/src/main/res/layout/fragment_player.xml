@@ -30,7 +30,8 @@
             android:textStyle="bold"
             android:text="Miracle Aligner"
             android:textColor="#bf000000"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+            android:textSize="16sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
         <TextView
             android:id="@+id/artist_track"

@@ -16,11 +16,11 @@
         android:layout_height="match_parent" />
     <TextView
         android:id="@+id/powered_by"
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="20dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:textColor="#80000000"
         android:text="Powered by Feed.fm"
         android:textSize="12sp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
