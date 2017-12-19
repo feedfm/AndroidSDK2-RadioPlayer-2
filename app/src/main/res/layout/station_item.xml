@@ -18,6 +18,8 @@
 
         <fm.feed.androidsdk2.richplayer.CircularProgressView
             android:id="@+id/circular_progress"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:visibility="invisible"
