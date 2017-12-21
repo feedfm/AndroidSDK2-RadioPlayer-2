@@ -2,14 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/history_background"
-    android:padding="15dp"
+    android:background="#262626"
+
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
+    <View
+        android:layout_marginBottom="16dp"
+        android:layout_width="match_parent"
+        android:background="#3a3a3a"
+        android:layout_height="1dp">
+    </View>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <ImageView
             android:id="@+id/ondemand_image"
             android:scaleType="centerCrop"
@@ -19,31 +27,56 @@
 
         <fm.feed.androidsdk2.richplayer.CircularProgressView
             android:id="@+id/play_progress"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:visibility="visible"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             app:cpv_animAutostart="true"
             app:cpv_color="@android:color/white"
             app:cpv_progress="100"
-            app:cpv_thickness="8dp"
+            app:cpv_thickness="4dp"
             app:cpv_isPlaying="true"/>
 
-        <ImageButton
-            android:visibility="invisible"
+        <RelativeLayout
             android:id="@+id/playSongOnDemand"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:scaleType="fitXY"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:background="@android:color/transparent"
-            android:src="@drawable/play_white" />
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_centerVertical="true">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false"
+                android:src="@drawable/round_white_button"/>
+
+            <ImageButton
+                android:id="@+id/play_station"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:scaleType="fitXY"
+                android:clickable="false"
+                android:focusable="false"
+                android:backgroundTint="#33000000"
+                android:background="@android:color/transparent"
+                android:src="@drawable/play_black" />
+
+        </RelativeLayout>
+
+
     </RelativeLayout>
 
 
     <RelativeLayout
+        android:layout_marginBottom="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -63,13 +96,12 @@
             android:maxWidth="300dp"
             android:layout_below="@+id/ondemand_title"
             android:textSize="14sp"
-            android:textColor="@android:color/white"
+            android:textColor="#97FFFFFF"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <LinearLayout
             android:layout_alignTop="@id/ondemand_title"
-            android:layout_marginTop="5dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
@@ -77,23 +109,26 @@
 
             <ImageButton
                 android:id="@+id/ondemand_like"
-                android:scaleType="centerCrop"
+                android:scaleType="fitXY"
+                android:layout_margin="12dp"
                 android:background="@android:color/transparent"
-
                 android:tint="@android:color/darker_gray"
                 android:src="@drawable/like_unfilled_black"
-                android:layout_width="36dp"
-                android:layout_height="36dp" />
+                android:layout_width="24dp"
+                android:layout_height="24dp" />
 
             <ImageButton
                 android:id="@+id/ondemand_dislike"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:background="#00000000"
-                android:scaleType="centerCrop"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_margin="12dp"
+                android:background="@android:color/transparent"
+                android:scaleType="fitXY"
                 android:src="@drawable/dislike_unfilled_black"
                 android:tint="@android:color/darker_gray" />
+
         </LinearLayout>
+
     </RelativeLayout>
 
 

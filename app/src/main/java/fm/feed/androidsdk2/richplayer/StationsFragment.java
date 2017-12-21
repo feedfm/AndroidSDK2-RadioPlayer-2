@@ -239,9 +239,9 @@ public class StationsFragment extends Fragment {
                 }
             };
             holder.playWhite.setOnClickListener(listener);
-            holder.circularProgressView.setOnClickListener(listener);
+            /*holder.circularProgressView.setOnClickListener(listener);
             holder.stationImage.setOnClickListener(listener);
-            holder.play.setOnClickListener(listener);
+            holder.play.setOnClickListener(listener);*/
             assignArtWork(stationList.get(i), holder.stationImage);
             return view;
         }

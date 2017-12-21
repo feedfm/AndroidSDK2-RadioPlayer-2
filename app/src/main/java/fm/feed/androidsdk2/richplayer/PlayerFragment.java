@@ -2,6 +2,8 @@ package fm.feed.androidsdk2.richplayer;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
@@ -192,11 +194,23 @@ public class PlayerFragment extends Fragment  {
         public void onLikeStatusChanged(AudioFile audioFile) {
             if (audioFile.isDisliked()) {
                 dislikeButton.setImageResource(R.drawable.dislike_filled_black);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    likeButton.setImageTintMode(PorterDuff.Mode.MULTIPLY);
+                    dislikeButton.setImageTintMode(PorterDuff.Mode.MULTIPLY);
+                }
             } else if (audioFile.isLiked()) {
                 likeButton.setImageResource(R.drawable.like_filled_black);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    likeButton.setImageTintMode(PorterDuff.Mode.MULTIPLY);
+                    dislikeButton.setImageTintMode(PorterDuff.Mode.MULTIPLY);
+                }
             } else {
                 likeButton.setImageResource(R.drawable.like_unfilled_black);
                 dislikeButton.setImageResource(R.drawable.dislike_unfilled_black);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    likeButton.setImageTintMode(PorterDuff.Mode.SRC_IN);
+                    dislikeButton.setImageTintMode(PorterDuff.Mode.SRC_IN);
+                }
             }
         }
     };
@@ -280,7 +294,8 @@ public class PlayerFragment extends Fragment  {
                 mPlayer.addUnhandledErrorListener(errorListener);
                 mPlayer.addOutOfMusicListener(outOfMusicListener);
                 mPlayer.addSkipListener(skipListener);
-
+                playHistory.setImageAlpha(204);
+                onDemandButton.setImageAlpha(204);
                 mStation = MainActivity.getStationById(mStationID, mPlayer.getStationList());
                 if(mStation!=null && mStation.getAudioFiles() != null) {
                     if (savedInstanceState == null && !isNew) {

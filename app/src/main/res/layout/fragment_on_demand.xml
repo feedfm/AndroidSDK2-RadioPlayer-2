@@ -1,22 +1,20 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="fm.feed.androidsdk2.richplayer.OnDemandFragment">
 
     <RelativeLayout
-        android:paddingStart="15dp"
-        android:paddingLeft="15dp"
-        android:paddingEnd="15dp"
-        android:paddingRight="15dp"
+
         android:background="@color/history_background"
         android:id="@+id/relative"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
             android:id="@+id/station_art_demand" />
 
         <TextView
@@ -30,8 +28,9 @@
             android:layout_toEndOf="@+id/station_art_demand"
             android:layout_toRightOf="@+id/station_art_demand"
             android:textColor="@android:color/white"
+            android:textSize="10sp"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:text="Playlist" />
+            android:text="PLAYLIST" />
 
         <TextView
             android:id="@+id/station_demand_name"
@@ -41,13 +40,14 @@
             android:layout_alignStart="@+id/playlist"
             android:layout_below="@+id/playlist"
             android:textColor="@android:color/white"
+            android:textSize="20dp"
             android:text="Station Name"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
     </RelativeLayout>
 
+
     <android.support.v7.widget.RecyclerView
-        android:layout_below="@+id/relative"
         android:id="@+id/demand_list"
         android:background="@color/history_background"
         android:layout_width="match_parent"
@@ -55,4 +55,4 @@
 
     </android.support.v7.widget.RecyclerView>
 
-</RelativeLayout>
+</LinearLayout>

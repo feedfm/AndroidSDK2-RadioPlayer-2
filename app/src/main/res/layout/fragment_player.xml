@@ -102,8 +102,6 @@
                 android:layout_alignTop="@+id/play_pause_button"
                 android:background="@android:color/transparent"
                 android:scaleType="fitXY"
-                android:tint="#bf000000"
-                android:tintMode="src_in"
                 android:src="@drawable/playlist_history_black"
                 android:layout_marginLeft="12dp"
                 android:layout_marginStart="12dp"
@@ -119,8 +117,6 @@
                 android:layout_alignTop="@+id/play_pause_button"
                 android:background="@android:color/transparent"
                 android:scaleType="fitXY"
-                android:tint="#bf000000"
-                android:tintMode="src_in"
                 android:src="@drawable/playlist_history_ondemand_black"
                 android:layout_marginLeft="12dp"
                 android:layout_marginStart="12dp"
@@ -164,33 +160,27 @@
                 android:tintMode="src_in"
                 android:src="@drawable/like_unfilled_black" />
 
-            <ImageView
+            <View
                 android:layout_width="1dp"
                 android:layout_height="66dp"
                 android:layout_toEndOf="@+id/skipButton"
                 android:layout_toRightOf="@+id/skipButton"
                 android:background="@color/divider_grey" />
 
-            <ImageView
+            <View
                 android:layout_width="1dp"
                 android:layout_height="66dp"
                 android:layout_toEndOf="@+id/dislikeButton"
                 android:layout_toRightOf="@+id/dislikeButton"
                 android:background="@color/divider_grey" />
 
-            <ImageView
+            <View
                 android:layout_width="1dp"
                 android:layout_height="66dp"
                 android:layout_toEndOf="@+id/play_pause_button"
                 android:layout_toRightOf="@+id/play_pause_button"
                 android:background="@color/divider_grey" />
 
-            <ImageView
-                android:background="@color/divider_grey"
-                android:layout_toEndOf="@+id/dislikeButton"
-                android:layout_toRightOf="@+id/dislikeButton"
-                android:layout_width="1dp"
-                android:layout_height="66dp" />
             </RelativeLayout>
 
 

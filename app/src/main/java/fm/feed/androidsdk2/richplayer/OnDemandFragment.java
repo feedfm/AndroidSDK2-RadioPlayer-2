@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.squareup.picasso.Picasso;
@@ -272,7 +273,7 @@ public class OnDemandFragment extends Fragment {
             @BindView(R.id.ondemand_dislike)
             ImageButton disLikeButton;
             @BindView(R.id.playSongOnDemand)
-            ImageButton playOnDemand;
+            RelativeLayout playOnDemand;
 
             public ViewHolder(View view){
                 super(view);
