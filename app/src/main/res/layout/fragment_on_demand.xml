@@ -15,6 +15,7 @@
         <ImageView
             android:layout_width="65dp"
             android:layout_height="65dp"
+            android:scaleType="centerCrop"
             android:id="@+id/station_art_demand" />
 
         <TextView
@@ -45,7 +46,6 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
     </RelativeLayout>
-
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/demand_list"

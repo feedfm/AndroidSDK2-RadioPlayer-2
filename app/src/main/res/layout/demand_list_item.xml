@@ -77,27 +77,34 @@
 
     <RelativeLayout
         android:layout_marginBottom="16dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
-            android:maxWidth="300dp"
-            android:id="@+id/ondemand_title"
-            android:maxLines="1"
             android:layout_marginTop="10dp"
-            android:textStyle="bold"
-            android:textSize="20sp"
+            android:id="@+id/ondemand_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/linearLayout"
+            android:layout_toStartOf="@+id/linearLayout"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:textColor="@android:color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/ondemand_artist"
-            android:maxWidth="300dp"
             android:layout_below="@+id/ondemand_title"
             android:textSize="14sp"
             android:textColor="#97FFFFFF"
-            android:layout_width="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:layout_toLeftOf="@+id/linearLayout"
+            android:layout_toStartOf="@+id/linearLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <LinearLayout
@@ -105,7 +112,8 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/linearLayout">
 
             <ImageButton
                 android:id="@+id/ondemand_like"
