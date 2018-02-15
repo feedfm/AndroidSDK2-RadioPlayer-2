@@ -20,6 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -120,7 +123,16 @@ public class PlayerFragment extends Fragment  {
     @OnClick(R.id.onDemandButton)
     public void onDemandButton()
     {
-        mListener.OnDemandButtonClicked(mStationID);
+        Timer timer = new Timer();
+        timer.schedule(
+                new TimerTask() {
+            @Override
+            public void run() {
+                mListener.OnDemandButtonClicked(mStationID);
+            }
+        }, 500);
+
+
     }
     /**
      * When we change stations or run out of music, update
@@ -178,6 +190,11 @@ public class PlayerFragment extends Fragment  {
         @Override
         public void onProgressUpdate(Play play, float elapsedTime, float duration) {
 
+            if(trackText.getText().equals("")){
+                trackText.setText(play.getAudioFile().getTrack().getTitle());
+                ArtistText.setText(play.getAudioFile().getArtist().getName());
+                likeStatusChangeListener.onLikeStatusChanged(play.getAudioFile());
+            }
         }
 
         @Override
@@ -300,7 +317,15 @@ public class PlayerFragment extends Fragment  {
                 if(mStation!=null && mStation.getAudioFiles() != null) {
                     if (savedInstanceState == null && !isNew) {
                         isNew = true;
-                        mListener.OnDemandButtonClicked(mStationID);
+                        Timer timer = new Timer();
+                        timer.schedule(
+                                new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        mListener.OnDemandButtonClicked(mStationID);
+                                    }
+                                }, 1000);
+
                         // Do this code only first time, not after rotation or reuse fragment from backstack
                     }
 

@@ -113,23 +113,25 @@
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:layout_marginRight="6dp"
             android:id="@+id/linearLayout">
 
             <ImageButton
                 android:id="@+id/ondemand_like"
                 android:scaleType="fitXY"
-                android:layout_margin="12dp"
+                android:layout_margin="6dp"
                 android:background="@android:color/transparent"
                 android:tint="@android:color/darker_gray"
                 android:src="@drawable/like_unfilled_black"
-                android:layout_width="24dp"
-                android:layout_height="24dp" />
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
 
             <ImageButton
                 android:id="@+id/ondemand_dislike"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_margin="12dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="6dp"
                 android:background="@android:color/transparent"
                 android:scaleType="fitXY"
                 android:src="@drawable/dislike_unfilled_black"

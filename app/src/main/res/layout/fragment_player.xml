@@ -28,7 +28,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:text="Miracle Aligner"
             android:textColor="#bf000000"
             android:textSize="16sp"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
@@ -40,7 +39,6 @@
             android:layout_marginBottom="10dp"
             android:textColor="#99000000"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:text="The last shadow Puppets"
             android:textAlignment="center" />
 
         <RelativeLayout

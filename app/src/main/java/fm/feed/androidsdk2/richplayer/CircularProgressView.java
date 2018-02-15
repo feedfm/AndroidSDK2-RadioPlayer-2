@@ -50,11 +50,11 @@ public class CircularProgressView extends View {
     private Paint whitePaint;
     private Paint transparentPaint;
 
-    int eqCols = 5;
-    int eqRows = 5;
+    int eqCols = 4;
+    int eqRows = 4;
     private int size = 0;
     private boolean isPlaying = false;
-
+    private int mDelay = 200;
 
 
     private boolean isInDeterminateAnim = true;
@@ -468,7 +468,7 @@ public class CircularProgressView extends View {
             indeterminateAnimator.cancel();
 
         if(isPlaying){
-            createVisualizerTimer(300);
+            createVisualizerTimer(mDelay);
         }
 
         // Determinate animation
@@ -565,11 +565,12 @@ public class CircularProgressView extends View {
         handler.postDelayed(runnable, delay);
     }
 
+
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
             isVisualizerDirty = true;
-            handler.postDelayed(this, 300);
+            handler.postDelayed(this, mDelay);
             invalidate();
         }
     };

@@ -47,10 +47,10 @@ public class AlbumArtFragment extends Fragment {
     FeedAudioPlayer mPlayer;
     Context mContext;
     private int mStationID;
-    AlbumArtFragmentListener mListener;
     int selectedIndex = 0;
     int playingStationIndex;
     List<Station> localStationList;
+    MyPagerAdapter pagerAdapter = null;
 
     @BindView(R.id.station_description_player) TextView stationDescription;
     @BindView(R.id.albumArtFlipper)     ViewPager viewPager;
@@ -105,6 +105,7 @@ public class AlbumArtFragment extends Fragment {
     {
         playingStationIndex = selectedIndex;
         mPlayer.setActiveStation(localStationList.get(selectedIndex), true);
+        mPlayer.play();
         view.setVisibility(View.INVISIBLE);
         gradientView.setVisibility(View.INVISIBLE);
     }
@@ -118,10 +119,10 @@ public class AlbumArtFragment extends Fragment {
     @OnClick(R.id.nextStation)
     public void nextStation()
     {
-        if(viewPager.getChildCount() > selectedIndex)
-        {
-            viewPager.setCurrentItem(++selectedIndex);
-        }
+            if(pagerAdapter.getCount() > selectedIndex) {
+                viewPager.setCurrentItem(++selectedIndex);
+            }
+
     }
 
     @OnClick(R.id.previousStation)
@@ -180,7 +181,7 @@ public class AlbumArtFragment extends Fragment {
     public void setUI() {
         if(mPlayer!= null && stationTitle !=null) {
 
-            final MyPagerAdapter pagerAdapter = new MyPagerAdapter();
+            pagerAdapter = new MyPagerAdapter();
             int temp = 0;
             for (Station st: localStationList) {
                 if(st.getId() == mStationID) {
@@ -273,9 +274,6 @@ public class AlbumArtFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-        if (context instanceof AlbumArtFragmentListener) {
-            mListener = (AlbumArtFragmentListener) context;
-        }
     }
 
     @Override
@@ -321,7 +319,4 @@ public class AlbumArtFragment extends Fragment {
         }
     }
 
-    public interface AlbumArtFragmentListener {
-        void onStationChangeRequestedFragment(Station station);
-    }
 }

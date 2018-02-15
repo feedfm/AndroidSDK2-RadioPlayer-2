@@ -70,7 +70,7 @@ public class StationsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_station, container, false);
         ButterKnife.bind(this, view);
-        if(((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
+        if(getActivity() !=null && ((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Stations");
         }
         FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
