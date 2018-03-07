@@ -197,7 +197,7 @@ public class PlayHistoryFragment extends Fragment {
 
         @Override
         public long getChildId(int i, int i1) {
-            return playHistory.get(i).playForThisStation.get(i1).getId().hashCode();
+            return playHistory.get(i).playForThisStation.get(i1).getAudioFile().getId().hashCode();
         }
 
         @Override

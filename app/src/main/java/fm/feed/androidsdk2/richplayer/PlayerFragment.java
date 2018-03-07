@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,6 +59,7 @@ public class PlayerFragment extends Fragment  {
     @BindView(R.id.historyButton)     ImageButton playHistory;
     @BindView(R.id.onDemandButton)    ImageButton onDemandButton;
 
+
     @OnClick(R.id.likeButton)
     public void likeButtonClick() {
         if(mPlayer.getCurrentPlay() != null) {
@@ -101,10 +103,9 @@ public class PlayerFragment extends Fragment  {
     @OnClick(R.id.powered_by_feed)
     public void poweredByFeed()
     {
-        Intent ai = new Intent(getContext(), PoweredByFeedActivity.class);
+        Intent ai = new Intent(mContext, PoweredByFeedActivity.class);
         startActivity(ai);
     }
-
 
     @OnClick(R.id.historyButton)
     public void showHistory()
@@ -184,7 +185,7 @@ public class PlayerFragment extends Fragment  {
 
         @Override
         public void onSkipStatusChanged(boolean b) {
-            skipButton.setEnabled(b);
+
         }
 
         @Override
@@ -259,7 +260,7 @@ public class PlayerFragment extends Fragment  {
             bufferingBar.setVisibility(View.INVISIBLE);
             if(!b)
             {
-                Toast.makeText(getContext(), "Skip Limit reached!" , Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Skip Limit reached!" , Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -269,7 +270,6 @@ public class PlayerFragment extends Fragment  {
     public PlayerFragment() {
         // Required empty public constructor
     }
-
 
     public static PlayerFragment newInstance(int stationId) {
         PlayerFragment fragment = new PlayerFragment();
@@ -295,7 +295,7 @@ public class PlayerFragment extends Fragment  {
         View view = inflater.inflate(R.layout.fragment_player, container, false);
         ButterKnife.bind(this, view);
         setRetainInstance(true);
-        if(((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
+        if(getActivity() != null && ((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Now playing");
         }
 
@@ -343,10 +343,9 @@ public class PlayerFragment extends Fragment  {
 
             @Override
             public void onPlayerUnavailable(Exception e) {
-                Toast.makeText(getContext(), "Unexpected error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Unexpected error", Toast.LENGTH_SHORT).show();
             }
         });
-
 
         mFragmentManager = getChildFragmentManager();
         AlbumArtFragment fragment = AlbumArtFragment.newInstance(mStationID);
@@ -356,10 +355,10 @@ public class PlayerFragment extends Fragment  {
         return view;
     }
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
         if (context instanceof OnPlayerFragmentInteractionListener) {
             mListener = (OnPlayerFragmentInteractionListener) context;
         } else {

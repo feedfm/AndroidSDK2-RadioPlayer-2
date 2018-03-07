@@ -95,7 +95,7 @@ public class OnDemandFragment extends Fragment {
                     mAdapter.SetOnItemClickListener(new OnItemViewClickListener() {
                         @Override
                         public void onItemClick(View view, int position, AudioFile file) {
-                            Log.d("DEMAND", " "+view.getId() +" P= "+ position);
+                            Log.d("DEMAND", " "+file.getId() +" P= "+ position);
                             switch (view.getId())
                             {
                                 case R.id.playSongOnDemand:

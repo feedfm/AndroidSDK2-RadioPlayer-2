@@ -13,4 +13,6 @@
     <color name="history_background">#3b3b3b</color>
     <color name="history_dark_background">#262626</color>
 
+    <color name="skip_button_color">#bf000000</color>
+
 </resources>
