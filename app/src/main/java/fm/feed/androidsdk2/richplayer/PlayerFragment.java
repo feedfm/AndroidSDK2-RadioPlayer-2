@@ -119,6 +119,9 @@ public class PlayerFragment extends Fragment  {
             transaction.addToBackStack(StationsFragment.class.getSimpleName());
             transaction.replace(R.id.container_view, fragment).commit();
         }
+        else {
+            manager.popBackStack();
+        }
     }
 
     @OnClick(R.id.onDemandButton)
