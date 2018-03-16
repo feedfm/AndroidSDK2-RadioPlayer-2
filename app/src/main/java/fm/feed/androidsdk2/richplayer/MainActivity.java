@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
             @Override
             public void onPlayerAvailable(FeedAudioPlayer aFeedAudioPlayer) {
                 feedAudioPlayer = aFeedAudioPlayer;
+                feedAudioPlayer.prepareStations();
                 feedAudioPlayer.addStationChangedListener(stationListener);
                 stationListener.onStationChanged(feedAudioPlayer.getActiveStation());
                 progressBar.setVisibility(View.INVISIBLE);
@@ -150,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
                 if (childFm.getBackStackEntryCount() > 0) {
                     for (Fragment childfragnested: childFm.getFragments()) {
                         FragmentManager childFmNestManager = childfragnested.getFragmentManager();
-                        if(childfragnested.isVisible()) {
+                        if(childfragnested.isVisible() && childFmNestManager !=null) {
                             childFmNestManager.popBackStack();
                             return;
                         }

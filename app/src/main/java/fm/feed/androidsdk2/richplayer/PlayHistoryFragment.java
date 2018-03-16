@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -57,11 +58,11 @@ public class PlayHistoryFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.play_history, container, false);
         ButterKnife.bind(this, view);
-        if(((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
+        if(getActivity()!= null && ((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("History");
         }
         FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
@@ -90,6 +91,8 @@ public class PlayHistoryFragment extends Fragment {
         // Set the adapter
         return view;
     }
+
+
 
     FeedAudioPlayer.PlayListener playListener = new FeedAudioPlayer.PlayListener() {
         @Override
@@ -236,6 +239,18 @@ public class PlayHistoryFragment extends Fragment {
             }
             holder.songTv.setText(playHistory.get(i).playForThisStation.get(i1).getAudioFile().getTrack().getTitle());
             holder.artistTv.setText(playHistory.get(i).playForThisStation.get(i1).getAudioFile().getArtist().getName());
+
+            if(playHistory.get(i).playForThisStation.get(i1).getAudioFile().isLiked()){
+                holder.likeButton.setImageResource(R.drawable.like_filled_black);
+            } else {
+                holder.likeButton.setImageResource(R.drawable.like_unfilled_black);
+            }
+            if(playHistory.get(i).playForThisStation.get(i1).getAudioFile().isDisliked())
+            {
+                holder.disLikeButton.setImageResource(R.drawable.dislike_filled_black);
+            }else {
+                holder.disLikeButton.setImageResource(R.drawable.dislike_unfilled_black);
+            }
             holder.disLikeButton.setTag(playHistory.get(i).playForThisStation.get(i1).getAudioFile());
             holder.likeButton.setTag(playHistory.get(i).playForThisStation.get(i1).getAudioFile());
 
@@ -268,6 +283,7 @@ public class PlayHistoryFragment extends Fragment {
             public void OnLike(ImageButton button)
             {
                 feedAudioPlayer.like((AudioFile)button.getTag());
+
             }
             @OnClick(R.id.history_child_dislike)
             public void OnDisLike(ImageButton button)

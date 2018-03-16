@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -67,12 +68,12 @@ public class OnDemandFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_on_demand, container, false);
         ButterKnife.bind(this, view);
-        if(((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
+        if((getActivity() != null) && ((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Playlist");
         }
 
@@ -86,6 +87,7 @@ public class OnDemandFragment extends Fragment {
                     feedAudioPlayer.addPlayListener(playListener);
                     feedAudioPlayer.addLikeStatusChangeListener(likeStatusChangeListener);
                     feedAudioPlayer.addStateListener(stateListener);
+
                     mAdapter = new RecyclerAdapter(feedAudioPlayer.getActiveStation().getAudioFiles());
                     recyclerListView.setLayoutManager(new LinearLayoutManager(getContext()));
                     recyclerListView.setAdapter(mAdapter);
@@ -109,6 +111,8 @@ public class OnDemandFragment extends Fragment {
                             }
                         }
                     });
+
+                    stateListener.onStateChanged(feedAudioPlayer.getState());
                 }
                 else {
                     Toast.makeText(getContext(), "This is not an on demand station", Toast.LENGTH_SHORT).show();
@@ -174,14 +178,14 @@ public class OnDemandFragment extends Fragment {
         boolean isPlaying = true;
 
 
-        public void setPlaying(boolean playing) {
+        private void setPlaying(boolean playing) {
             if(isPlaying != playing) {
                 isPlaying = playing;
                 notifyDataSetChanged();
             }
         }
 
-        public void setActivePlayingID(String playingID) {
+        private void setActivePlayingID(String playingID) {
 
             int i = 0, oldPos = 0, newPos = 0;
             for(AudioFile file:list)
@@ -201,7 +205,7 @@ public class OnDemandFragment extends Fragment {
             mAdapter.notifyItemChanged(oldPos);
         }
 
-        public void setUpdatedAudioFile(AudioFile file) {
+        private void setUpdatedAudioFile(AudioFile file) {
             int i = 0;
             for (AudioFile audioFile:list) {
                 if(audioFile.equals(file))
@@ -215,7 +219,7 @@ public class OnDemandFragment extends Fragment {
             }
         }
 
-        public RecyclerAdapter(List<AudioFile> itemsData) {
+        private RecyclerAdapter(List<AudioFile> itemsData) {
             this.list = itemsData;
         }
 
@@ -275,7 +279,7 @@ public class OnDemandFragment extends Fragment {
             @BindView(R.id.playSongOnDemand)
             RelativeLayout playOnDemand;
 
-            public ViewHolder(View view){
+            private ViewHolder(View view){
                 super(view);
                 ButterKnife.bind(this,view);
                 likeButton.setOnClickListener(this);
@@ -294,7 +298,7 @@ public class OnDemandFragment extends Fragment {
 
         }
 
-        public void SetOnItemClickListener(final OnItemViewClickListener mItemClickListener) {
+        private void SetOnItemClickListener(final OnItemViewClickListener mItemClickListener) {
             this.mItemClickListener = mItemClickListener;
         }
 

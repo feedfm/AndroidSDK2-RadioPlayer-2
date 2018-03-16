@@ -77,6 +77,7 @@ public class StationsFragment extends Fragment {
             @Override
             public void onPlayerAvailable(FeedAudioPlayer audioPlayer) {
                 feedAudioPlayer = audioPlayer;
+
                 stationAdaptor = new StationAdaptor(feedAudioPlayer.getStationList(), inflater, gridView);
                 Station station = feedAudioPlayer.getActiveStation();
                 stationChangedListener.onStationChanged(station);

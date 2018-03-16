@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -104,7 +105,7 @@ public class AlbumArtFragment extends Fragment {
     public void ChangeStation(View view)
     {
         playingStationIndex = selectedIndex;
-        mPlayer.setActiveStation(localStationList.get(selectedIndex), true);
+        mPlayer.setActiveStation(localStationList.get(selectedIndex), false);
         mPlayer.play();
         view.setVisibility(View.INVISIBLE);
         gradientView.setVisibility(View.INVISIBLE);
@@ -152,7 +153,7 @@ public class AlbumArtFragment extends Fragment {
     };
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_album_art, container, false);
@@ -250,12 +251,13 @@ public class AlbumArtFragment extends Fragment {
 
 
         @Override
-        public boolean isViewFromObject(View view, Object object) {
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
             return object==view;
         }
 
+        @NonNull
         @Override
-        public Object instantiateItem(final ViewGroup container, int position) {
+        public Object instantiateItem(@NonNull final ViewGroup container, int position) {
 
             ImageView imageView = new ImageView(mContext);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -265,7 +267,7 @@ public class AlbumArtFragment extends Fragment {
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             container.removeView((ImageView)object);
         }
     };

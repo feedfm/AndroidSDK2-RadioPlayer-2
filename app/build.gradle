@@ -6,7 +6,7 @@ android {
     repositories {
         mavenCentral()
 
-        // needed for the feed.fm player-sdk:
+        // needed for the feed.fm player-sdk testing, don't use in production.:
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots"
         }
@@ -24,6 +24,12 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -40,6 +46,7 @@ dependencies {
 
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    //Remove snapshot if it exists
     compile 'fm.feed.android:player-sdk:5.1.3-SNAPSHOT'
 
 }

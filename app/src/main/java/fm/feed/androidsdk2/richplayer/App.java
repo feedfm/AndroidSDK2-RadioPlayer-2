@@ -16,7 +16,6 @@ public class App extends Application {
         super.onCreate();
 
         FeedPlayerService.initialize(getApplicationContext(),"ondemand","ondemand");
-
     }
 
 }
