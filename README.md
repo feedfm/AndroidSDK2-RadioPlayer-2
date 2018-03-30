@@ -5,5 +5,5 @@ This is our second Android app that makes use of the Feed Media SDK to power a P
 
 This player will retrieve the list of stations to display from the server, along with station meta-data that defines background images and descriptive text.
 
-This is the Android equivalent of [https://github.com/feedfm/iOS-RadioPlayer-2](iOS RadioPlayer2).
+This is the Android equivalent of [iOS RadioPlayer2](https://github.com/feedfm/iOS-RadioPlayer-2)
 
