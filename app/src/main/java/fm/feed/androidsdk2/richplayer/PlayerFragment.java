@@ -243,13 +243,14 @@ public class PlayerFragment extends Fragment  {
         }
     };
 
-    // Station has ended, so we are switching to next station.
+    // Station has ended, so we are switching to a next station.
     FeedAudioPlayer.OutOfMusicListener outOfMusicListener = new FeedAudioPlayer.OutOfMusicListener() {
         @Override
         public void onOutOfMusic() {
             int inx = mPlayer.getStationList().indexOf(mStation);
-            if(mPlayer.getStationList().size() >= inx+1)  // If we have more stations available switch to them
+            if(mPlayer.getStationList().size() > inx+1)  // If we have more stations available switch to them
             {
+                // TODO fix crash here
                 mPlayer.setActiveStation(mPlayer.getStationList().get(inx+1));
             }
         }

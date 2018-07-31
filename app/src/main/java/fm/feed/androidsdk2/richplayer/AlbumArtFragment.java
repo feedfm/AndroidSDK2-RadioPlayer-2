@@ -106,6 +106,7 @@ public class AlbumArtFragment extends Fragment {
     {
         playingStationIndex = selectedIndex;
         mPlayer.setActiveStation(localStationList.get(selectedIndex), false);
+        //mPlayer.prepareToPlay(null);
         mPlayer.play();
         view.setVisibility(View.INVISIBLE);
         gradientView.setVisibility(View.INVISIBLE);
