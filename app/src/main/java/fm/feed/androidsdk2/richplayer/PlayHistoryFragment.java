@@ -47,13 +47,13 @@ public class PlayHistoryFragment extends Fragment {
      * fragment (e.g. upon screen orientation changes).
      */
     public PlayHistoryFragment() {
+
     }
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
     }
 
@@ -65,34 +65,58 @@ public class PlayHistoryFragment extends Fragment {
         if(getActivity()!= null && ((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("History");
         }
-        FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
+        if((getActivity() != null) && !((MainActivity)getActivity()).isOfflineMode()) {
+            FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
 
-            @Override
-            public void onPlayerAvailable(FeedAudioPlayer aFeedAudioPlayer) {
-                feedAudioPlayer = aFeedAudioPlayer;
-                stationList =  feedAudioPlayer.getStationList();
-                feedAudioPlayer.addPlayListener(playListener);
-                feedAudioPlayer.addLikeStatusChangeListener(likeStatusChangeListener);
-                adapter = new PlayHistoryAdapter(feedAudioPlayer.getPlayHistory(), inflater);
-                listView.setAdapter(adapter);
-                int count = adapter.getGroupCount();
-                for (int position = 0; position < count; position++)
-                {
-                    listView.expandGroup(position);
+                @Override
+                public void onPlayerAvailable(FeedAudioPlayer aFeedAudioPlayer) {
+                    feedAudioPlayer = aFeedAudioPlayer;
+                    if ((getActivity() != null)) {
+                        stationList = ((MainActivity) getActivity()).getStationList();
+                    }
+                    setupPlayer(inflater);
                 }
-            }
 
-            @Override
-            public void onPlayerUnavailable(Exception e) {
+                @Override
+                public void onPlayerUnavailable(Exception e) {
 
-            }
-        });
+                }
+            });
+        }
+        else {
+            FeedPlayerService.getInstance(new FeedAudioPlayer.OfflineAvailabilityListener() {
+                @Override
+                public void onOfflineStationsAvailable(FeedAudioPlayer aFeedAudioPlayer) {
+                    feedAudioPlayer = aFeedAudioPlayer;
+                    if ((getActivity() != null)) {
+                        stationList = ((MainActivity) getActivity()).getStationList();
+                    }
+                    setupPlayer(inflater);
+                }
+
+                @Override
+                public void offlineMusicUnAvailable() {
+
+                }
+            });
+        }
 
         // Set the adapter
         return view;
     }
 
 
+    private void setupPlayer(LayoutInflater inflater) {
+        feedAudioPlayer.addPlayListener(playListener);
+        feedAudioPlayer.addLikeStatusChangeListener(likeStatusChangeListener);
+        adapter = new PlayHistoryAdapter(feedAudioPlayer.getPlayHistory(), inflater);
+        listView.setAdapter(adapter);
+        int count = adapter.getGroupCount();
+        for (int position = 0; position < count; position++)
+        {
+            listView.expandGroup(position);
+        }
+    }
 
     FeedAudioPlayer.PlayListener playListener = new FeedAudioPlayer.PlayListener() {
         @Override

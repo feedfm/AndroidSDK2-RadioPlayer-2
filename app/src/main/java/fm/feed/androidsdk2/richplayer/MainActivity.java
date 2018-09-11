@@ -45,18 +45,62 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
     @BindView(R.id.toolbar)
     android.support.v7.widget.Toolbar toolbar;
     FragmentManager mFragmentManager;
-    FeedAudioPlayer feedAudioPlayer;
+    private FeedAudioPlayer feedAudioPlayer;
+    private List<Station> stationList;
+    private boolean isOfflineMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         if ((ab != null) && (getSupportParentActivityIntent() != null)) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
+        mFragmentManager = getSupportFragmentManager();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Intent intent = getIntent();
+        String str  = intent.getStringExtra("Target");
+        feedAudioPlayer = FeedPlayerService.getInstance();
+        if(str.equals("Offline")) {
+            isOfflineMode = true;
+            stationList = feedAudioPlayer.getStationsAvailableOffline();
+            setupPlayer();
+        }
+        else if(str.equals("Online"))  {
+            isOfflineMode = false;
+            feedAudioPlayer.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
+                @Override
+                public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
+                    stationList = feedAudioPlayer.getStationList();
+                    setupPlayer();
+                }
+
+                @Override
+                public void onPlayerUnavailable(Exception e) {
+                    tvUnavailable.setVisibility(View.VISIBLE);
+                }
+            });
+
+        }
+
+    }
+
+    void setupPlayer()
+    {
         final NotificationStyle ni = new NotificationStyle()
                 .setSmallIcon(R.drawable.play_white_15dp)
                 .setPlayIcon(R.drawable.play_white_15dp)
@@ -79,26 +123,20 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
                 .setArtistTextId(R.id.notification_track_artist)
                 .setReleaseTextId(R.id.notification_track_release);
 
-        mFragmentManager = getSupportFragmentManager();
+        feedAudioPlayer.addStationChangedListener(stationListener);
+        stationListener.onStationChanged(feedAudioPlayer.getActiveStation());
+        progressBar.setVisibility(View.INVISIBLE);
+        feedAudioPlayer.setNotificationStyle(ni);
+        loadStationsFragment();
+        setPendingIntent();
+    }
 
-        FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
-            @Override
-            public void onPlayerAvailable(FeedAudioPlayer aFeedAudioPlayer) {
-                feedAudioPlayer = aFeedAudioPlayer;
-                feedAudioPlayer.prepareStations();
-                feedAudioPlayer.addStationChangedListener(stationListener);
-                stationListener.onStationChanged(feedAudioPlayer.getActiveStation());
-                progressBar.setVisibility(View.INVISIBLE);
-                feedAudioPlayer.setNotificationStyle(ni);
-                loadStationsFragment();
-                setPendingIntent();
-            }
+    public boolean isOfflineMode() {
+        return isOfflineMode;
+    }
 
-            @Override
-            public void onPlayerUnavailable(Exception e) {
-                tvUnavailable.setVisibility(View.VISIBLE);
-            }
-        });
+    public List<Station> getStationList(){
+        return stationList;
     }
 
     FeedAudioPlayer.StationChangedListener stationListener  = new FeedAudioPlayer.StationChangedListener() {
@@ -166,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
     @Override
     public void onStationSelected(long stationId) {
 
-        Station station = getStationById((int)stationId, feedAudioPlayer.getStationList());
+        Station station = getStationById((int)stationId, stationList);
         if(station != null)
         {
             feedAudioPlayer.setActiveStation(station, false);

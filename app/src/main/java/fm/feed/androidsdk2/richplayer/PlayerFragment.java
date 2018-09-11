@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -47,6 +48,7 @@ public class PlayerFragment extends Fragment  {
     Station mStation;
     boolean isNew = false;
     FragmentManager mFragmentManager;
+    List<Station> localStationList;
 
     @BindView(R.id.powered_by_feed)   TextView textView;
     @BindView(R.id.title_track)       TextView trackText;
@@ -247,11 +249,11 @@ public class PlayerFragment extends Fragment  {
     FeedAudioPlayer.OutOfMusicListener outOfMusicListener = new FeedAudioPlayer.OutOfMusicListener() {
         @Override
         public void onOutOfMusic() {
-            int inx = mPlayer.getStationList().indexOf(mStation);
-            if(mPlayer.getStationList().size() > inx+1)  // If we have more stations available switch to them
+            int inx = localStationList.indexOf(mStation);
+            if(localStationList.size() > inx+1)  // If we have more stations available switch to them
             {
                 // TODO fix crash here
-                mPlayer.setActiveStation(mPlayer.getStationList().get(inx+1));
+                mPlayer.setActiveStation(localStationList.get(inx+1));
             }
         }
     };
@@ -303,53 +305,41 @@ public class PlayerFragment extends Fragment  {
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Now playing");
         }
 
-        FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
-            @Override
-            public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
-                mPlayer = feedAudioPlayer;
-                mPlayer.setCrossFadeInEnabled(true);
-                mPlayer.addPlayListener(playListener);
-                mPlayer.addStationChangedListener(stationChangedListener);
-                mPlayer.addStateListener(stateListener);
-                mPlayer.addLikeStatusChangeListener(likeStatusChangeListener);
-                mPlayer.addUnhandledErrorListener(errorListener);
-                mPlayer.addOutOfMusicListener(outOfMusicListener);
-                mPlayer.addSkipListener(skipListener);
-                playHistory.setImageAlpha(204);
-                onDemandButton.setImageAlpha(204);
-                mStation = MainActivity.getStationById(mStationID, mPlayer.getStationList());
-                if(mStation!=null && mStation.getAudioFiles() != null) {
-                    if (savedInstanceState == null && !isNew) {
-                        isNew = true;
-                        Timer timer = new Timer();
-                        timer.schedule(
-                                new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        mListener.OnDemandButtonClicked(mStationID);
-                                    }
-                                }, 1000);
-
-                        // Do this code only first time, not after rotation or reuse fragment from backstack
+        if((getActivity() != null) && !((MainActivity)getActivity()).isOfflineMode()) {
+            FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
+                @Override
+                public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
+                    if((getActivity() != null)) {
+                        localStationList = ((MainActivity)getActivity()).getStationList();
                     }
+                    mPlayer = feedAudioPlayer;
+                    setupPlayer(savedInstanceState);
 
-                    onDemandButton.setVisibility(View.VISIBLE);
-                    playHistory.setVisibility(View.GONE);
                 }
-                else {
-                    isNew = true;
-                    mPlayer.play();
-                    onDemandButton.setVisibility(View.GONE);
-                    playHistory.setVisibility(View.VISIBLE);
-                }
-                stateListener.onStateChanged(feedAudioPlayer.getState());
-            }
 
-            @Override
-            public void onPlayerUnavailable(Exception e) {
-                Toast.makeText(mContext, "Unexpected error", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onPlayerUnavailable(Exception e) {
+                    Toast.makeText(mContext, "Unexpected error", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else {
+            FeedPlayerService.getInstance(new FeedAudioPlayer.OfflineAvailabilityListener() {
+                @Override
+                public void onOfflineStationsAvailable(FeedAudioPlayer feedAudioPlayer) {
+                    if ((getActivity() != null)) {
+                        localStationList = ((MainActivity) getActivity()).getStationList();
+                    }
+                    mPlayer = feedAudioPlayer;
+                    setupPlayer(savedInstanceState);
+                }
+
+                @Override
+                public void offlineMusicUnAvailable() {
+
+                }
+            });
+        }
 
         mFragmentManager = getChildFragmentManager();
         AlbumArtFragment fragment = AlbumArtFragment.newInstance(mStationID);
@@ -358,6 +348,47 @@ public class PlayerFragment extends Fragment  {
         transaction.add(R.id.container_view,fragment, AlbumArtFragment.class.getSimpleName()).commitNow();
         return view;
     }
+
+
+    public void setupPlayer(Bundle savedInstanceState){
+        mPlayer.setCrossFadeInEnabled(true);
+        mPlayer.addPlayListener(playListener);
+        mPlayer.addStationChangedListener(stationChangedListener);
+        mPlayer.addStateListener(stateListener);
+        mPlayer.addLikeStatusChangeListener(likeStatusChangeListener);
+        mPlayer.addUnhandledErrorListener(errorListener);
+        mPlayer.addOutOfMusicListener(outOfMusicListener);
+        mPlayer.addSkipListener(skipListener);
+        playHistory.setImageAlpha(204);
+        onDemandButton.setImageAlpha(204);
+        mStation = MainActivity.getStationById(mStationID, localStationList);
+        if(mStation!=null && mStation.getAudioFiles() != null) {
+            if (savedInstanceState == null && !isNew) {
+                isNew = true;
+                Timer timer = new Timer();
+                timer.schedule(
+                        new TimerTask() {
+                            @Override
+                            public void run() {
+                                mListener.OnDemandButtonClicked(mStationID);
+                            }
+                        }, 1000);
+
+                // Do this code only first time, not after rotation or reuse fragment from backstack
+            }
+
+            onDemandButton.setVisibility(View.VISIBLE);
+            playHistory.setVisibility(View.GONE);
+        }
+        else {
+            isNew = true;
+            mPlayer.play();
+            onDemandButton.setVisibility(View.GONE);
+            playHistory.setVisibility(View.VISIBLE);
+        }
+        stateListener.onStateChanged(mPlayer.getState());
+    }
+
 
     @Override
     public void onAttach(Context context) {

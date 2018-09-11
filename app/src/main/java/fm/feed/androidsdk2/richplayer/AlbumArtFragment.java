@@ -160,27 +160,50 @@ public class AlbumArtFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_album_art, container, false);
         ButterKnife.bind(this, view);
 
+        if((getActivity() != null) && !((MainActivity)getActivity()).isOfflineMode()) {
+            FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
+                @Override
+                public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
+                    mPlayer = feedAudioPlayer;
+                    if ((getActivity() != null)) {
+                        localStationList = ((MainActivity) getActivity()).getStationList();
+                    }
+                    setUI();
+                }
 
-        FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
-            @Override
-            public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
-                mPlayer = feedAudioPlayer;
-                mPlayer.addPlayListener(playListener);
-                mPlayer.addStationChangedListener(stationChangedListener);
-                localStationList = mPlayer.getStationList();
-                setUI();
-            }
+                @Override
+                public void onPlayerUnavailable(Exception e) {
 
-            @Override
-            public void onPlayerUnavailable(Exception e) {
+                }
+            });
+        }
+        else {
+            FeedPlayerService.getInstance(new FeedAudioPlayer.OfflineAvailabilityListener() {
+                @Override
+                public void onOfflineStationsAvailable(FeedAudioPlayer feedAudioPlayer) {
+                    mPlayer = feedAudioPlayer;
+                    if ((getActivity() != null)) {
+                        localStationList = ((MainActivity) getActivity()).getStationList();
+                    }
+                    setUI();
+                }
 
-            }
-        });
+                @Override
+                public void offlineMusicUnAvailable() {
+
+                }
+            });
+        }
 
         return view;
     }
 
     public void setUI() {
+
+        if(mPlayer!= null) {
+            mPlayer.addPlayListener(playListener);
+            mPlayer.addStationChangedListener(stationChangedListener);
+        }
         if(mPlayer!= null && stationTitle !=null) {
 
             pagerAdapter = new MyPagerAdapter();
