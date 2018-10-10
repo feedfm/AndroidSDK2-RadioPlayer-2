@@ -85,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
             @Override
             public void onPlayerAvailable(FeedAudioPlayer aFeedAudioPlayer) {
                 feedAudioPlayer = aFeedAudioPlayer;
-                feedAudioPlayer.prepareStations();
                 feedAudioPlayer.addStationChangedListener(stationListener);
                 stationListener.onStationChanged(feedAudioPlayer.getActiveStation());
                 progressBar.setVisibility(View.INVISIBLE);
