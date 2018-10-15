@@ -4,17 +4,13 @@ package fm.feed.androidsdk2.richplayer;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +41,7 @@ public class AlbumArtFragment extends Fragment {
 
     private static final String TAG = AlbumArtFragment.class.getSimpleName();
     private static final String DEFAULT_STATION_ID = "station_id";
+    private static final String IS_MODE_OFFLINE = "isModeOffline";
     FeedAudioPlayer mPlayer;
     Context mContext;
     private int mStationID;
@@ -52,6 +49,7 @@ public class AlbumArtFragment extends Fragment {
     int playingStationIndex;
     List<Station> localStationList;
     MyPagerAdapter pagerAdapter = null;
+    boolean isOfflineMode;
 
     @BindView(R.id.station_description_player) TextView stationDescription;
     @BindView(R.id.albumArtFlipper)     ViewPager viewPager;
@@ -68,10 +66,11 @@ public class AlbumArtFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static AlbumArtFragment newInstance(int stationId) {
+    public static AlbumArtFragment newInstance(int stationId, boolean isModeOffline) {
         AlbumArtFragment fragment = new AlbumArtFragment();
         Bundle args = new Bundle();
         args.putInt(DEFAULT_STATION_ID, stationId);
+        args.putBoolean(IS_MODE_OFFLINE, isModeOffline);
         fragment.setArguments(args);
         return fragment;
     }
@@ -81,6 +80,7 @@ public class AlbumArtFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mStationID = getArguments().getInt(DEFAULT_STATION_ID);
+            isOfflineMode = getArguments().getBoolean(IS_MODE_OFFLINE);
         }
     }
 
@@ -160,13 +160,14 @@ public class AlbumArtFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_album_art, container, false);
         ButterKnife.bind(this, view);
 
-        if((getActivity() != null) && !((MainActivity)getActivity()).isOfflineMode()) {
-            FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
+        mPlayer = FeedPlayerService.getInstance();
+
+        if(!isOfflineMode) {
+            mPlayer.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
                 @Override
                 public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
-                    mPlayer = feedAudioPlayer;
                     if ((getActivity() != null)) {
-                        localStationList = ((MainActivity) getActivity()).getStationList();
+                        localStationList = mPlayer.getStationList();
                     }
                     setUI();
                 }
@@ -177,22 +178,12 @@ public class AlbumArtFragment extends Fragment {
                 }
             });
         }
-        else {
-            FeedPlayerService.getInstance(new FeedAudioPlayer.OfflineAvailabilityListener() {
-                @Override
-                public void onOfflineStationsAvailable(FeedAudioPlayer feedAudioPlayer) {
-                    mPlayer = feedAudioPlayer;
-                    if ((getActivity() != null)) {
-                        localStationList = ((MainActivity) getActivity()).getStationList();
-                    }
-                    setUI();
-                }
-
-                @Override
-                public void offlineMusicUnAvailable() {
-
-                }
-            });
+        else{
+            if (mPlayer.getLocalOfflineStationList().size()>0)
+            {
+                localStationList = mPlayer.getLocalOfflineStationList();
+                setUI();
+            }
         }
 
         return view;

@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
         feedAudioPlayer = FeedPlayerService.getInstance();
         if(str.equals("Offline")) {
             isOfflineMode = true;
-            stationList = feedAudioPlayer.getStationsAvailableOffline();
+            stationList = feedAudioPlayer.getLocalOfflineStationList();
             setupPlayer();
         }
         else if(str.equals("Online"))  {
@@ -131,13 +131,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
         setPendingIntent();
     }
 
-    public boolean isOfflineMode() {
-        return isOfflineMode;
-    }
 
-    public List<Station> getStationList(){
-        return stationList;
-    }
 
     FeedAudioPlayer.StationChangedListener stationListener  = new FeedAudioPlayer.StationChangedListener() {
         @Override
@@ -155,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
 
     private void loadStationsFragment()
     {
-        StationsFragment fragment = new StationsFragment();
+        StationsFragment fragment = StationsFragment.newInstance(isOfflineMode);
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down, R.anim.slide_in_up,R.anim.slide_out_down);
         transaction.replace(R.id.baseLayout, fragment).commit();
@@ -163,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
 
     private void loadPlayerFragment(int stationId)
     {
-        PlayerFragment fragment = PlayerFragment.newInstance(stationId);
+        PlayerFragment fragment = PlayerFragment.newInstance(stationId, isOfflineMode);
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down, R.anim.slide_in_up,R.anim.slide_out_down);
         transaction.addToBackStack(PlayerFragment.class.getSimpleName());
@@ -217,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
         String bgUrl;
         try {
             bgUrl = (String) station.getOption("background_image_url");
-        } catch (ClassCastException e) {
+        } catch (Exception e) {
             bgUrl = null;
         }
 

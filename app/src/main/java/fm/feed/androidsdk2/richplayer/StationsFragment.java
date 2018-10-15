@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -25,7 +23,6 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.zip.Inflater;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,12 +36,23 @@ import fm.feed.android.playersdk.models.Station;
 
 public class StationsFragment extends Fragment {
 
+      private StationSelectionListener mListener;
 
-    private StationSelectionListener mListener;
 
     public StationsFragment() {
 
     }
+
+    private static final String ISMODEOFFLINE = "isModeOffline";
+
+    public static StationsFragment newInstance(Boolean isOfflineMode) {
+        StationsFragment fragment = new StationsFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(ISMODEOFFLINE, isOfflineMode);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 
     @BindView(R.id.station_grid)
     GridView gridView;
@@ -54,6 +62,7 @@ public class StationsFragment extends Fragment {
     StationAdaptor stationAdaptor;
     FeedAudioPlayer feedAudioPlayer;
     List<Station> localStationList;
+    Boolean isOfflineMode;
 
     @OnClick(R.id.powered_by)
     public void onPoweredBy(){
@@ -65,6 +74,9 @@ public class StationsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            isOfflineMode = getArguments().getBoolean(ISMODEOFFLINE);
+        }
     }
 
     @Override
@@ -76,16 +88,15 @@ public class StationsFragment extends Fragment {
         if(getActivity() !=null && ((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Stations");
         }
-        if((getActivity() != null) && !((MainActivity)getActivity()).isOfflineMode()) {
-            FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
+        feedAudioPlayer = FeedPlayerService.getInstance();
+        if(!isOfflineMode) {
+            feedAudioPlayer.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
                 @Override
-                public void onPlayerAvailable(FeedAudioPlayer audioPlayer) {
-                    feedAudioPlayer = audioPlayer;
-                    if ((getActivity() != null)) {
-                        localStationList = ((MainActivity) getActivity()).getStationList();
-                    }
+                public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
+                    localStationList = feedAudioPlayer.getStationList();
                     setup(inflater);
                 }
+
                 @Override
                 public void onPlayerUnavailable(Exception e) {
 
@@ -93,21 +104,11 @@ public class StationsFragment extends Fragment {
             });
         }
         else{
-            FeedPlayerService.getInstance(new FeedAudioPlayer.OfflineAvailabilityListener() {
-                @Override
-                public void onOfflineStationsAvailable(FeedAudioPlayer audioPlayer) {
-                    feedAudioPlayer = audioPlayer;
-                    if ((getActivity() != null)) {
-                        localStationList = ((MainActivity) getActivity()).getStationList();
-                    }
-                    setup(inflater);
-                }
-
-                @Override
-                public void offlineMusicUnAvailable() {
-
-                }
-            });
+            if (feedAudioPlayer.getLocalOfflineStationList().size() > 0)
+            {
+                localStationList = feedAudioPlayer.getLocalOfflineStationList();
+                setup(inflater);
+            }
         }
 
         return view;

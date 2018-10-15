@@ -35,13 +35,15 @@ import java.util.List;
  */
 public class PlayHistoryFragment extends Fragment {
 
+    private static final String IS_MODE_OFFLINE = "isModeOffline";
+
     List<Station> stationList;
     @BindView(R.id.historyList)
     ExpandableListView listView;
 
     FeedAudioPlayer feedAudioPlayer;
     PlayHistoryAdapter adapter;
-
+    boolean isOfflineMode;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -51,11 +53,22 @@ public class PlayHistoryFragment extends Fragment {
     }
 
 
+    public static PlayHistoryFragment newInstance(boolean isModeOffline) {
+        PlayHistoryFragment fragment = new PlayHistoryFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(IS_MODE_OFFLINE, isModeOffline);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if (getArguments() != null) {
+            isOfflineMode = getArguments().getBoolean(IS_MODE_OFFLINE);
+        }
     }
+
 
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, ViewGroup container,
@@ -65,15 +78,16 @@ public class PlayHistoryFragment extends Fragment {
         if(getActivity()!= null && ((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("History");
         }
-        if((getActivity() != null) && !((MainActivity)getActivity()).isOfflineMode()) {
-            FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
-
+        feedAudioPlayer = FeedPlayerService.getInstance();
+        if (feedAudioPlayer.getLocalOfflineStationList().size() > 0)
+        {
+            stationList = feedAudioPlayer.getLocalOfflineStationList();
+            setupPlayer(inflater);
+        }
+        feedAudioPlayer.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
                 @Override
-                public void onPlayerAvailable(FeedAudioPlayer aFeedAudioPlayer) {
-                    feedAudioPlayer = aFeedAudioPlayer;
-                    if ((getActivity() != null)) {
-                        stationList = ((MainActivity) getActivity()).getStationList();
-                    }
+                public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
+                    stationList.addAll( feedAudioPlayer.getStationList());
                     setupPlayer(inflater);
                 }
 
@@ -82,26 +96,8 @@ public class PlayHistoryFragment extends Fragment {
 
                 }
             });
-        }
-        else {
-            FeedPlayerService.getInstance(new FeedAudioPlayer.OfflineAvailabilityListener() {
-                @Override
-                public void onOfflineStationsAvailable(FeedAudioPlayer aFeedAudioPlayer) {
-                    feedAudioPlayer = aFeedAudioPlayer;
-                    if ((getActivity() != null)) {
-                        stationList = ((MainActivity) getActivity()).getStationList();
-                    }
-                    setupPlayer(inflater);
-                }
 
-                @Override
-                public void offlineMusicUnAvailable() {
 
-                }
-            });
-        }
-
-        // Set the adapter
         return view;
     }
 

@@ -35,9 +35,9 @@ public class RemoteList extends AppCompatActivity {
 
             @Override
             public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
-                if(feedAudioPlayer.getRemoteStationList().size() > 0)
+                if(feedAudioPlayer.getRemoteOfflineStationList().size() > 0)
                 {
-                    adapter = new RemoteAdapter(feedAudioPlayer.getRemoteStationList(), getLayoutInflater());
+                    adapter = new RemoteAdapter(feedAudioPlayer.getRemoteOfflineStationList(), getLayoutInflater());
                     listView.setAdapter(adapter);
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
@@ -72,15 +72,13 @@ public class RemoteList extends AppCompatActivity {
 
             float percent = ((totalDownloads - pendingDownloads - interruptedDownloads) *100) / totalDownloads;
             Progress progress = new Progress(station.getId(), percent);
-            adapter.setProgress(progress);
-        }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
 
-        @Override
-        public void onStationDownloadComplete(Station station, int totalDownloads, int successfulDownloads, int interruptedDownloads) {
-
-            float percent = 100;
-            Progress progress = new Progress(station.getId(), percent);
-            adapter.setProgress(progress);
+                    adapter.setProgress(progress);
+                }
+            });
         }
     };
 

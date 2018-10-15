@@ -27,11 +27,11 @@ public class LaunchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
         ButterKnife.bind(this);
-
-        FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
+        FeedAudioPlayer player = FeedPlayerService.getInstance();
+        player.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
             @Override
             public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
-                if(feedAudioPlayer.getRemoteStationList().size() > 0)
+                if(feedAudioPlayer.getRemoteOfflineStationList().size() > 0)
                 {
                     stationsRemote.setEnabled(true);
                 }
@@ -43,17 +43,9 @@ public class LaunchActivity extends AppCompatActivity {
             }
         });
 
-        FeedPlayerService.getInstance(new FeedAudioPlayer.OfflineAvailabilityListener() {
-            @Override
-            public void onOfflineStationsAvailable(FeedAudioPlayer feedAudioPlayer) {
-                stationsOffline.setEnabled(true);
-            }
-
-            @Override
-            public void offlineMusicUnAvailable() {
-
-            }
-        });
+        if (player.getLocalOfflineStationList().size() > 0){
+            stationsOffline.setEnabled(true);
+        }
     }
 
     @OnClick(R.id.open_offline)

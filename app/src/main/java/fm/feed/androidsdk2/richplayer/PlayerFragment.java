@@ -42,6 +42,7 @@ public class PlayerFragment extends Fragment  {
 
     private static final String TAG = "PLAYER_FRAGMENT";
     private static final String DEFAULT_STATION_ID = "station_id";
+    private static final String IS_MODE_OFFLINE = "isModeOffline";
     FeedAudioPlayer mPlayer;
     Context mContext;
     private int mStationID;
@@ -60,6 +61,7 @@ public class PlayerFragment extends Fragment  {
     @BindView(R.id.buffering_spinner) ProgressBar bufferingBar;
     @BindView(R.id.historyButton)     ImageButton playHistory;
     @BindView(R.id.onDemandButton)    ImageButton onDemandButton;
+    private boolean isOfflineMode;
 
 
     @OnClick(R.id.likeButton)
@@ -114,7 +116,7 @@ public class PlayerFragment extends Fragment  {
     {
         FragmentManager manager = getChildFragmentManager();
         if(manager.getBackStackEntryCount() == 0) {
-            PlayHistoryFragment fragment = new PlayHistoryFragment();
+            PlayHistoryFragment fragment = PlayHistoryFragment.newInstance(isOfflineMode);
             //OnDemandFragment fragment = new OnDemandFragment();
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down,R.anim.slide_in_up, R.anim.slide_out_down );
@@ -277,10 +279,11 @@ public class PlayerFragment extends Fragment  {
         // Required empty public constructor
     }
 
-    public static PlayerFragment newInstance(int stationId) {
+    public static PlayerFragment newInstance(int stationId, boolean isOfflineMode) {
         PlayerFragment fragment = new PlayerFragment();
         Bundle args = new Bundle();
         args.putInt(DEFAULT_STATION_ID, stationId);
+        args.putBoolean(IS_MODE_OFFLINE, isOfflineMode);
         fragment.setArguments(args);
         return fragment;
     }
@@ -290,6 +293,7 @@ public class PlayerFragment extends Fragment  {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mStationID = getArguments().getInt(DEFAULT_STATION_ID);
+            isOfflineMode = getArguments().getBoolean(IS_MODE_OFFLINE);
         }
 
     }
@@ -304,17 +308,15 @@ public class PlayerFragment extends Fragment  {
         if(getActivity() != null && ((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Now playing");
         }
+        mPlayer = FeedPlayerService.getInstance();
+        if(!isOfflineMode) {
 
-        if((getActivity() != null) && !((MainActivity)getActivity()).isOfflineMode()) {
-            FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
+            mPlayer.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
                 @Override
                 public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
-                    if((getActivity() != null)) {
-                        localStationList = ((MainActivity)getActivity()).getStationList();
-                    }
+                    localStationList = mPlayer.getStationList();
                     mPlayer = feedAudioPlayer;
                     setupPlayer(savedInstanceState);
-
                 }
 
                 @Override
@@ -324,25 +326,17 @@ public class PlayerFragment extends Fragment  {
             });
         }
         else {
-            FeedPlayerService.getInstance(new FeedAudioPlayer.OfflineAvailabilityListener() {
-                @Override
-                public void onOfflineStationsAvailable(FeedAudioPlayer feedAudioPlayer) {
-                    if ((getActivity() != null)) {
-                        localStationList = ((MainActivity) getActivity()).getStationList();
-                    }
-                    mPlayer = feedAudioPlayer;
-                    setupPlayer(savedInstanceState);
+            if (mPlayer.getLocalOfflineStationList().size()>0)
+            {
+                if ((getActivity() != null)) {
+                    localStationList = mPlayer.getLocalOfflineStationList();
                 }
-
-                @Override
-                public void offlineMusicUnAvailable() {
-
-                }
-            });
+                setupPlayer(savedInstanceState);
+            }
         }
 
         mFragmentManager = getChildFragmentManager();
-        AlbumArtFragment fragment = AlbumArtFragment.newInstance(mStationID);
+        AlbumArtFragment fragment = AlbumArtFragment.newInstance(mStationID, isOfflineMode);
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down, R.anim.slide_in_up, R.anim.slide_out_down);
         transaction.add(R.id.container_view,fragment, AlbumArtFragment.class.getSimpleName()).commitNow();
