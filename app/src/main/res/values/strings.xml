@@ -16,5 +16,6 @@
     <string name="like_button">Like button</string>
     <string name="skip_button">Skip button</string>
     <string name="play_pause_button">Play Pause Button</string>
+    <string name="title_activity_remote_list">RemoteList</string>
 
 </resources>

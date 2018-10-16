@@ -45,18 +45,62 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
     @BindView(R.id.toolbar)
     android.support.v7.widget.Toolbar toolbar;
     FragmentManager mFragmentManager;
-    FeedAudioPlayer feedAudioPlayer;
+    private FeedAudioPlayer feedAudioPlayer;
+    private List<Station> stationList;
+    private boolean isOfflineMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         if ((ab != null) && (getSupportParentActivityIntent() != null)) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
+        mFragmentManager = getSupportFragmentManager();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Intent intent = getIntent();
+        String str  = intent.getStringExtra("Target");
+        feedAudioPlayer = FeedPlayerService.getInstance();
+        if(str.equals("Offline")) {
+            isOfflineMode = true;
+            stationList = feedAudioPlayer.getLocalOfflineStationList();
+            setupPlayer();
+        }
+        else if(str.equals("Online"))  {
+            isOfflineMode = false;
+            feedAudioPlayer.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
+                @Override
+                public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
+                    stationList = feedAudioPlayer.getStationList();
+                    setupPlayer();
+                }
+
+                @Override
+                public void onPlayerUnavailable(Exception e) {
+                    tvUnavailable.setVisibility(View.VISIBLE);
+                }
+            });
+
+        }
+
+    }
+
+    void setupPlayer()
+    {
         final NotificationStyle ni = new NotificationStyle()
                 .setSmallIcon(R.drawable.play_white_15dp)
                 .setPlayIcon(R.drawable.play_white_15dp)
@@ -98,7 +142,15 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
                 tvUnavailable.setVisibility(View.VISIBLE);
             }
         });
+        feedAudioPlayer.addStationChangedListener(stationListener);
+        stationListener.onStationChanged(feedAudioPlayer.getActiveStation());
+        progressBar.setVisibility(View.INVISIBLE);
+        feedAudioPlayer.setNotificationStyle(ni);
+        loadStationsFragment();
+        setPendingIntent();
     }
+
+
 
     FeedAudioPlayer.StationChangedListener stationListener  = new FeedAudioPlayer.StationChangedListener() {
         @Override
@@ -116,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
 
     private void loadStationsFragment()
     {
-        StationsFragment fragment = new StationsFragment();
+        StationsFragment fragment = StationsFragment.newInstance(isOfflineMode);
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down, R.anim.slide_in_up,R.anim.slide_out_down);
         transaction.replace(R.id.baseLayout, fragment).commit();
@@ -124,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
 
     private void loadPlayerFragment(int stationId)
     {
-        PlayerFragment fragment = PlayerFragment.newInstance(stationId);
+        PlayerFragment fragment = PlayerFragment.newInstance(stationId, isOfflineMode);
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down, R.anim.slide_in_up,R.anim.slide_out_down);
         transaction.addToBackStack(PlayerFragment.class.getSimpleName());
@@ -165,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
     @Override
     public void onStationSelected(long stationId) {
 
-        Station station = getStationById((int)stationId, feedAudioPlayer.getStationList());
+        Station station = getStationById((int)stationId, stationList);
         if(station != null)
         {
             feedAudioPlayer.setActiveStation(station, false);
@@ -178,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
         String bgUrl;
         try {
             bgUrl = (String) station.getOption("background_image_url");
-        } catch (ClassCastException e) {
+        } catch (Exception e) {
             bgUrl = null;
         }
 

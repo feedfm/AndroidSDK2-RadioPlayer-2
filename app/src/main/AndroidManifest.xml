@@ -15,14 +15,12 @@
         tools:replace="android:theme">
 
         <activity
-
             android:name=".MainActivity"
             android:theme="@style/RichPlayerLightTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".LaunchActivity" />
         </activity>
-
         <activity
             android:name=".PoweredByFeedActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
@@ -31,14 +29,18 @@
             android:name=".QrreaderActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".LaunchActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".RemoteList"
+            android:label="@string/title_activity_remote_list"
+            android:theme="@style/RichPlayerLightTheme"></activity>
     </application>
 
 </manifest>

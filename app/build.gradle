@@ -39,6 +39,7 @@ dependencies {
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support:design:27.1.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
@@ -49,6 +50,6 @@ dependencies {
     implementation 'me.dm7.barcodescanner:zxing:1.9.8'
 
     //Remove snapshot if it exists
-    implementation 'fm.feed.android:player-sdk:5.1.7-SNAPSHOT'
+    implementation 'fm.feed.android:player-sdk:5.1.16-SNAPSHOT'
 
 }

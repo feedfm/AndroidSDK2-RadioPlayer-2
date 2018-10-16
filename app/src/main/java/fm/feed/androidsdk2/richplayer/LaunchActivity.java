@@ -17,6 +17,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
+import fm.feed.android.playersdk.FeedAudioPlayer;
+import fm.feed.android.playersdk.FeedPlayerService;
 
 public class LaunchActivity extends AppCompatActivity {
 
@@ -27,6 +29,10 @@ public class LaunchActivity extends AppCompatActivity {
     @BindView(R.id.scan_token)
     Button scanButtion;
 
+    @BindView(R.id.open_offline)
+    Button stationsOffline;
+    @BindView(R.id.open_remote_offline)
+    Button stationsRemote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +40,39 @@ public class LaunchActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_launch);
         ButterKnife.bind(this);
+        FeedAudioPlayer player = FeedPlayerService.getInstance();
+        player.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
+            @Override
+            public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
+                if(feedAudioPlayer.getRemoteOfflineStationList().size() > 0)
+                {
+                    stationsRemote.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void onPlayerUnavailable(Exception e) {
+
+            }
+        });
+
+        if (player.getLocalOfflineStationList().size() > 0){
+            stationsOffline.setEnabled(true);
+        }
+    }
+
+    @OnClick(R.id.open_offline)
+    public void StationsOffline() {
+        Intent ai = new Intent(this, MainActivity.class);
+        ai.putExtra("Target","Offline");
+        startActivity(ai);
+    }
+
+    @OnClick(R.id.open_remote_offline)
+    public void OpenRemoteOffline() {
+        Intent ai = new Intent(this, RemoteList.class);
+        startActivity(ai);
+
     }
 
     @OnClick(R.id.open_onDemand)
@@ -46,6 +85,7 @@ public class LaunchActivity extends AppCompatActivity {
     @OnClick(R.id.open_station)
     public void OpenStationsView() {
         Intent ai = new Intent(this, MainActivity.class);
+        ai.putExtra("Target","Online");
         startActivity(ai);
     }
 

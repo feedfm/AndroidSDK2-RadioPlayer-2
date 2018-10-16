@@ -35,27 +35,40 @@ import java.util.List;
  */
 public class PlayHistoryFragment extends Fragment {
 
+    private static final String IS_MODE_OFFLINE = "isModeOffline";
+
     List<Station> stationList;
     @BindView(R.id.historyList)
     ExpandableListView listView;
 
     FeedAudioPlayer feedAudioPlayer;
     PlayHistoryAdapter adapter;
-
+    boolean isOfflineMode;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public PlayHistoryFragment() {
+
     }
 
+
+    public static PlayHistoryFragment newInstance(boolean isModeOffline) {
+        PlayHistoryFragment fragment = new PlayHistoryFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(IS_MODE_OFFLINE, isModeOffline);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
+        if (getArguments() != null) {
+            isOfflineMode = getArguments().getBoolean(IS_MODE_OFFLINE);
+        }
     }
+
 
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, ViewGroup container,
@@ -65,34 +78,41 @@ public class PlayHistoryFragment extends Fragment {
         if(getActivity()!= null && ((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("History");
         }
-        FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
-
-            @Override
-            public void onPlayerAvailable(FeedAudioPlayer aFeedAudioPlayer) {
-                feedAudioPlayer = aFeedAudioPlayer;
-                stationList =  feedAudioPlayer.getStationList();
-                feedAudioPlayer.addPlayListener(playListener);
-                feedAudioPlayer.addLikeStatusChangeListener(likeStatusChangeListener);
-                adapter = new PlayHistoryAdapter(feedAudioPlayer.getPlayHistory(), inflater);
-                listView.setAdapter(adapter);
-                int count = adapter.getGroupCount();
-                for (int position = 0; position < count; position++)
-                {
-                    listView.expandGroup(position);
+        feedAudioPlayer = FeedPlayerService.getInstance();
+        if (feedAudioPlayer.getLocalOfflineStationList().size() > 0)
+        {
+            stationList = feedAudioPlayer.getLocalOfflineStationList();
+            setupPlayer(inflater);
+        }
+        feedAudioPlayer.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
+                @Override
+                public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
+                    stationList.addAll( feedAudioPlayer.getStationList());
+                    setupPlayer(inflater);
                 }
-            }
 
-            @Override
-            public void onPlayerUnavailable(Exception e) {
+                @Override
+                public void onPlayerUnavailable(Exception e) {
 
-            }
-        });
+                }
+            });
 
-        // Set the adapter
+
         return view;
     }
 
 
+    private void setupPlayer(LayoutInflater inflater) {
+        feedAudioPlayer.addPlayListener(playListener);
+        feedAudioPlayer.addLikeStatusChangeListener(likeStatusChangeListener);
+        adapter = new PlayHistoryAdapter(feedAudioPlayer.getPlayHistory(), inflater);
+        listView.setAdapter(adapter);
+        int count = adapter.getGroupCount();
+        for (int position = 0; position < count; position++)
+        {
+            listView.expandGroup(position);
+        }
+    }
 
     FeedAudioPlayer.PlayListener playListener = new FeedAudioPlayer.PlayListener() {
         @Override

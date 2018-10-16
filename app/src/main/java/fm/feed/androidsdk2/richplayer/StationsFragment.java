@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -38,12 +36,23 @@ import fm.feed.android.playersdk.models.Station;
 
 public class StationsFragment extends Fragment {
 
+      private StationSelectionListener mListener;
 
-    private StationSelectionListener mListener;
 
     public StationsFragment() {
 
     }
+
+    private static final String ISMODEOFFLINE = "isModeOffline";
+
+    public static StationsFragment newInstance(Boolean isOfflineMode) {
+        StationsFragment fragment = new StationsFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(ISMODEOFFLINE, isOfflineMode);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 
     @BindView(R.id.station_grid)
     GridView gridView;
@@ -52,6 +61,8 @@ public class StationsFragment extends Fragment {
     TextView powered_by;
     StationAdaptor stationAdaptor;
     FeedAudioPlayer feedAudioPlayer;
+    List<Station> localStationList;
+    Boolean isOfflineMode;
 
     @OnClick(R.id.powered_by)
     public void onPoweredBy(){
@@ -63,6 +74,9 @@ public class StationsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            isOfflineMode = getArguments().getBoolean(ISMODEOFFLINE);
+        }
     }
 
     @Override
@@ -74,41 +88,52 @@ public class StationsFragment extends Fragment {
         if(getActivity() !=null && ((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Stations");
         }
-        FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
-            @Override
-            public void onPlayerAvailable(FeedAudioPlayer audioPlayer) {
-                feedAudioPlayer = audioPlayer;
+        feedAudioPlayer = FeedPlayerService.getInstance();
+        if(!isOfflineMode) {
+            feedAudioPlayer.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
+                @Override
+                public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
+                    localStationList = feedAudioPlayer.getStationList();
+                    setup(inflater);
+                }
 
-                stationAdaptor = new StationAdaptor(feedAudioPlayer.getStationList(), inflater, gridView);
-                Station station = feedAudioPlayer.getActiveStation();
-                stationChangedListener.onStationChanged(station);
-                feedAudioPlayer.addStationChangedListener(stationChangedListener);
-                feedAudioPlayer.addStateListener(stateListener);
-                feedAudioPlayer.addPlayListener(playListener);
+                @Override
+                public void onPlayerUnavailable(Exception e) {
 
-                gridView.setAdapter(stationAdaptor);
-                Resources r = getResources();
-                float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, r.getDisplayMetrics());
-                gridView.setHorizontalSpacing((int)px);
-                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                        onStationSelected(l);
-                    }
-                });
-
-                feedAudioPlayer.getStationList();
-
+                }
+            });
+        }
+        else{
+            if (feedAudioPlayer.getLocalOfflineStationList().size() > 0)
+            {
+                localStationList = feedAudioPlayer.getLocalOfflineStationList();
+                setup(inflater);
             }
-
-            @Override
-            public void onPlayerUnavailable(Exception e) {
-
-            }
-        });
+        }
 
         return view;
+    }
+
+    private void setup(LayoutInflater inflater) {
+
+        stationAdaptor = new StationAdaptor(localStationList, inflater, gridView);
+        Station station = feedAudioPlayer.getActiveStation();
+        stationChangedListener.onStationChanged(station);
+        feedAudioPlayer.addStationChangedListener(stationChangedListener);
+        feedAudioPlayer.addStateListener(stateListener);
+        feedAudioPlayer.addPlayListener(playListener);
+
+        gridView.setAdapter(stationAdaptor);
+        Resources r = getResources();
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, r.getDisplayMetrics());
+        gridView.setHorizontalSpacing((int)px);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                onStationSelected(l);
+            }
+        });
     }
 
     FeedAudioPlayer.StationChangedListener stationChangedListener = new FeedAudioPlayer.StationChangedListener() {
