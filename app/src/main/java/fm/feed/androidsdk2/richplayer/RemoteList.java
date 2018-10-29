@@ -7,9 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.exoplayer2.Player;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,25 +24,34 @@ import butterknife.ButterKnife;
 import fm.feed.android.playersdk.FeedAudioPlayer;
 import fm.feed.android.playersdk.FeedPlayerService;
 import fm.feed.android.playersdk.models.Station;
+import fm.feed.android.playersdk.models.StationList;
 
 public class RemoteList extends AppCompatActivity {
 
     @BindView(R.id.remoteList)
     ListView listView;
     RemoteAdapter adapter;
+
+    FeedAudioPlayer player;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_list);
         ButterKnife.bind(this);
-        FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
+        player = FeedPlayerService.getInstance();
+        player.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
 
             @Override
             public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
+
                 if(feedAudioPlayer.getRemoteOfflineStationList().size() > 0)
                 {
-                    adapter = new RemoteAdapter(feedAudioPlayer.getRemoteOfflineStationList(), getLayoutInflater());
+                    StationList localOfflineStationList = feedAudioPlayer.getLocalOfflineStationList();
+
+                    adapter = new RemoteAdapter(feedAudioPlayer.getRemoteOfflineStationList(), getLayoutInflater(), localOfflineStationList);
                     listView.setAdapter(adapter);
+
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -82,6 +95,9 @@ public class RemoteList extends AppCompatActivity {
         }
     };
 
+
+
+
     public class Progress {
         Progress(Integer sId, float progress) {
             id = sId;
@@ -101,12 +117,14 @@ public class RemoteList extends AppCompatActivity {
     public class RemoteAdapter extends BaseAdapter {
 
         List<Station> stationArrayList;
+        StationList localStations;
         List<Progress> progresses = new ArrayList<>();
         LayoutInflater inflater;
 
-        RemoteAdapter(List<Station> list, LayoutInflater inflater) {
+        RemoteAdapter(List<Station> list, LayoutInflater inflater, StationList localList) {
             stationArrayList = list;
             this.inflater = inflater;
+            localStations = localList;
         }
 
         public void setProgress(Progress progress) {
@@ -156,6 +174,22 @@ public class RemoteList extends AppCompatActivity {
                     holder.progressBar.setProgress((int) pr.getProgress());
                 }
             }
+            Station station = localStations.getStationWithName(stationArrayList.get(position).getName());
+            if(station == null)
+            {
+                holder.button.setVisibility(View.INVISIBLE);
+            }
+            else
+            {
+                holder.button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        player.deleteOfflineStation(station);
+                        Toast.makeText(inflater.getContext() , "Station deleted from offline cache",Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
             holder.textView.setText(stationArrayList.get(position).getName());
             return convertView;
         }
@@ -165,6 +199,8 @@ public class RemoteList extends AppCompatActivity {
             TextView textView;
             @BindView(R.id.progressBar3)
             ProgressBar progressBar;
+            @BindView(R.id.deleteStation)
+            ImageButton button;
         }
     }
 }

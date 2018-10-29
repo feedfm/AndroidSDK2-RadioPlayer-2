@@ -64,4 +64,16 @@
         android:background="@android:color/white"
         android:text="Scan Tokens" />
 
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="178dp"
+        android:textColor="@color/history_dark_background"
+        android:checked="false"
+        android:text="International Stations" />
+
+
 </RelativeLayout>

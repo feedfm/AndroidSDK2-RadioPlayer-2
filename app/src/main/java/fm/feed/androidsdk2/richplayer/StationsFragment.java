@@ -304,7 +304,7 @@ public class StationsFragment extends Fragment {
             bgUrl = null;
         }
 
-        if (bgUrl != null && !bgUrl.isEmpty()) {
+        if (bgUrl != null && !bgUrl.trim().equals("")) {
 
             Picasso.with(getContext()).load(bgUrl).resize(400, 400).centerCrop().into(imageView);
 

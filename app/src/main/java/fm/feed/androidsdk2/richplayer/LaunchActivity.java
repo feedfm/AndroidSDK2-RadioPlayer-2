@@ -2,6 +2,7 @@ package fm.feed.androidsdk2.richplayer;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -9,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.zxing.Result;
@@ -29,10 +32,14 @@ public class LaunchActivity extends AppCompatActivity {
     @BindView(R.id.scan_token)
     Button scanButtion;
 
+
     @BindView(R.id.open_offline)
     Button stationsOffline;
     @BindView(R.id.open_remote_offline)
     Button stationsRemote;
+
+    @BindView(R.id.switch1)
+    Switch internationalSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +48,29 @@ public class LaunchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_launch);
         ButterKnife.bind(this);
         FeedAudioPlayer player = FeedPlayerService.getInstance();
+        internationalSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(isChecked)
+                {
+                    SharedPreferences settings;
+                    settings = getSharedPreferences("FEEDCREDS", MODE_PRIVATE);
+                    String token = settings.getString("token", "offline");
+                    String secret = settings.getString("secret", "offline");
+                    FeedPlayerService.initialize(getApplicationContext(),token,secret, false, FeedAudioPlayer.MockLocations.EU);
+                }
+                else {
+
+                    SharedPreferences settings;
+                    settings = getSharedPreferences("FEEDCREDS", MODE_PRIVATE);
+                    String token = settings.getString("token", "offline");
+                    String secret = settings.getString("secret", "offline");
+
+                    FeedPlayerService.initialize(getApplicationContext(),token,secret);
+                }
+            }
+        });
         player.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
             @Override
             public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {

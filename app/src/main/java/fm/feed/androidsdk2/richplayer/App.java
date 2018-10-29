@@ -17,8 +17,9 @@ public class App extends Application {
         super.onCreate();
         SharedPreferences settings;
         settings = getSharedPreferences("FEEDCREDS", MODE_PRIVATE);
-        String token = settings.getString("token", "ondemand");
-        String secret = settings.getString("secret", "ondemand");
+        String token = settings.getString("token", "offline");
+        String secret = settings.getString("secret", "offline");
+
         FeedPlayerService.initialize(getApplicationContext(),token,secret);
     }
 

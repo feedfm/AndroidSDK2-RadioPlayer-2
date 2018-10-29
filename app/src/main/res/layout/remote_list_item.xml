@@ -27,4 +27,14 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="12dp" />
 
+    <ImageButton
+        android:id="@+id/deleteStation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/progressBar3"
+        android:layout_alignRight="@id/progressBar3"
+        android:layout_alignParentTop="true"
+        android:foregroundTint="@color/colorPrimaryDark"
+        android:src="@drawable/feedfm_ic_close_white_24dp" />
+
 </RelativeLayout>
