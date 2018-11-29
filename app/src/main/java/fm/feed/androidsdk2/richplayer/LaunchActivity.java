@@ -58,7 +58,12 @@ public class LaunchActivity extends AppCompatActivity {
                     settings = getSharedPreferences("FEEDCREDS", MODE_PRIVATE);
                     String token = settings.getString("token", "offline");
                     String secret = settings.getString("secret", "offline");
-                    FeedPlayerService.initialize(getApplicationContext(),token,secret, false, FeedAudioPlayer.MockLocations.EU);
+                    FeedAudioPlayer.Builder builder = new FeedAudioPlayer.Builder()
+                            .setSecret(secret)
+                            .setToken(token)
+                            .setContext(getApplicationContext())
+                            .setMockLocation(FeedAudioPlayer.MockLocations.EU);
+                    FeedPlayerService.initialize(builder);
                 }
                 else {
 
@@ -121,7 +126,6 @@ public class LaunchActivity extends AppCompatActivity {
 
     @OnClick(R.id.scan_token)
     public void ScanTokens() {
-
         ActivityCompat.requestPermissions(LaunchActivity.this,
                 new String[]{Manifest.permission.CAMERA},
                 1);

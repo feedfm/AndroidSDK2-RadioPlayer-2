@@ -50,6 +50,6 @@ dependencies {
     implementation 'me.dm7.barcodescanner:zxing:1.9.8'
 
     //Remove snapshot if it exists
-    implementation 'fm.feed.android:player-sdk:5.1.16-SNAPSHOT'
+    implementation 'fm.feed.android:player-sdk:5.1.15-SNAPSHOT'
 
 }
