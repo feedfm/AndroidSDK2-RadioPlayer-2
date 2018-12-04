@@ -217,25 +217,27 @@ public class PlayerFragment extends Fragment  {
     FeedAudioPlayer.LikeStatusChangeListener likeStatusChangeListener = new FeedAudioPlayer.LikeStatusChangeListener() {
         @Override
         public void onLikeStatusChanged(AudioFile audioFile) {
-            if (audioFile.isDisliked()) {
-                dislikeButton.setImageResource(R.drawable.dislike_filled_black);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    likeButton.setImageTintMode(PorterDuff.Mode.MULTIPLY);
-                    dislikeButton.setImageTintMode(PorterDuff.Mode.MULTIPLY);
-                }
-            } else if (audioFile.isLiked()) {
-                likeButton.setImageResource(R.drawable.like_filled_black);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    likeButton.setImageTintMode(PorterDuff.Mode.MULTIPLY);
-                    dislikeButton.setImageTintMode(PorterDuff.Mode.MULTIPLY);
-                }
-            } else {
-                likeButton.setImageResource(R.drawable.like_unfilled_black);
-                dislikeButton.setImageResource(R.drawable.dislike_unfilled_black);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    likeButton.setImageTintMode(PorterDuff.Mode.SRC_IN);
-                    dislikeButton.setImageTintMode(PorterDuff.Mode.SRC_IN);
-                }
+            if((mPlayer.getCurrentPlay() != null && audioFile.getId().equals(mPlayer.getCurrentPlay().getAudioFile().getId()))) {
+                    if (audioFile.isDisliked()) {
+                        dislikeButton.setImageResource(R.drawable.dislike_filled_black);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            likeButton.setImageTintMode(PorterDuff.Mode.MULTIPLY);
+                            dislikeButton.setImageTintMode(PorterDuff.Mode.MULTIPLY);
+                        }
+                    } else if (audioFile.isLiked()) {
+                        likeButton.setImageResource(R.drawable.like_filled_black);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            likeButton.setImageTintMode(PorterDuff.Mode.MULTIPLY);
+                            dislikeButton.setImageTintMode(PorterDuff.Mode.MULTIPLY);
+                        }
+                    } else {
+                        likeButton.setImageResource(R.drawable.like_unfilled_black);
+                        dislikeButton.setImageResource(R.drawable.dislike_unfilled_black);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            likeButton.setImageTintMode(PorterDuff.Mode.SRC_IN);
+                            dislikeButton.setImageTintMode(PorterDuff.Mode.SRC_IN);
+                        }
+                    }
             }
         }
     };

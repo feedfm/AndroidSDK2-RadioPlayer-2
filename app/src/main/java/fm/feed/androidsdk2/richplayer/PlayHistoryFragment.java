@@ -87,7 +87,11 @@ public class PlayHistoryFragment extends Fragment {
         feedAudioPlayer.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
                 @Override
                 public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
-                    stationList.addAll( feedAudioPlayer.getStationList());
+                    if(stationList != null)
+                        stationList.addAll( feedAudioPlayer.getStationList());
+                    else {
+                        stationList = feedAudioPlayer.getStationList();
+                    }
                     setupPlayer(inflater);
                 }
 
@@ -302,13 +306,22 @@ public class PlayHistoryFragment extends Fragment {
             @OnClick(R.id.history_child_like)
             public void OnLike(ImageButton button)
             {
-                feedAudioPlayer.like((AudioFile)button.getTag());
-
+                if(!((AudioFile)button.getTag()).isLiked()) {
+                    feedAudioPlayer.like((AudioFile)button.getTag());
+                }
+                else {
+                    feedAudioPlayer.unlike((AudioFile) button.getTag());
+                }
             }
             @OnClick(R.id.history_child_dislike)
             public void OnDisLike(ImageButton button)
             {
-                feedAudioPlayer.dislike((AudioFile)button.getTag());
+                if(!((AudioFile)button.getTag()).isDisliked()) {
+                    feedAudioPlayer.dislike((AudioFile)button.getTag());
+                }
+                else {
+                    feedAudioPlayer.unlike((AudioFile) button.getTag());
+                }
             }
         }
     }
