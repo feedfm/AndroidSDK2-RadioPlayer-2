@@ -20,7 +20,11 @@ public class App extends Application {
         String token = settings.getString("token", "offline");
         String secret = settings.getString("secret", "offline");
 
-        FeedPlayerService.initialize(getApplicationContext(),token,secret);
+        FeedAudioPlayer.Builder builder = new FeedAudioPlayer.Builder().setToken(token)
+                .setSecret(secret)
+                .setContext(getApplicationContext());
+        // Do not build, send builder to FeedPlayerService
+        FeedPlayerService.initialize(builder);
     }
 
 }

@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
 
     void setupPlayer()
     {
+        // Only needed for below api 26, does not work above 26
         final NotificationStyle ni = new NotificationStyle()
                 .setSmallIcon(R.drawable.play_white_15dp)
                 .setPlayIcon(R.drawable.play_white_15dp)
@@ -152,12 +153,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
 
 
 
-    FeedAudioPlayer.StationChangedListener stationListener  = new FeedAudioPlayer.StationChangedListener() {
-        @Override
-        public void onStationChanged(Station station) {
-            assignLockScreen(station);
-        }
-    };
+    FeedAudioPlayer.StationChangedListener stationListener  = this::assignLockScreen;
 
     private void setPendingIntent(){
         Intent ai = new Intent(getIntent());

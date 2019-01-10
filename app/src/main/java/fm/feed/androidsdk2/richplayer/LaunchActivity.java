@@ -71,8 +71,11 @@ public class LaunchActivity extends AppCompatActivity {
                     settings = getSharedPreferences("FEEDCREDS", MODE_PRIVATE);
                     String token = settings.getString("token", "offline");
                     String secret = settings.getString("secret", "offline");
-
-                    FeedPlayerService.initialize(getApplicationContext(),token,secret);
+                    FeedAudioPlayer.Builder builder = new FeedAudioPlayer.Builder()
+                            .setSecret(secret)
+                            .setToken(token)
+                            .setContext(getApplicationContext());
+                    FeedPlayerService.initialize(builder);
                 }
             }
         });
