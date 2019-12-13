@@ -1,5 +1,6 @@
 package fm.feed.androidsdk2.richplayer;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -164,8 +165,11 @@ public class PlayerFragment extends Fragment  {
         }
         else if(state == FeedAudioPlayer.State.STALLED)
         {
-            playPauseButton.setVisibility(View.INVISIBLE);
-            bufferingBar.setVisibility(View.VISIBLE);
+            ((Activity)mContext).runOnUiThread(() -> {
+
+                playPauseButton.setVisibility(View.INVISIBLE);
+                bufferingBar.setVisibility(View.VISIBLE);
+            });
         }
 
         }
