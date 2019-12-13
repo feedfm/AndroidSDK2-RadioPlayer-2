@@ -6,21 +6,19 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.app.NavUtils;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 
 import com.squareup.picasso.Picasso;
@@ -43,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
     @BindView(R.id.loading_player)
     ProgressBar progressBar;
     @BindView(R.id.toolbar)
-    android.support.v7.widget.Toolbar toolbar;
+    androidx.appcompat.widget.Toolbar toolbar;
     FragmentManager mFragmentManager;
     private FeedAudioPlayer feedAudioPlayer;
     private List<Station> stationList;
@@ -131,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
             public void onPlayerAvailable(FeedAudioPlayer aFeedAudioPlayer) {
                 feedAudioPlayer = aFeedAudioPlayer;
                 feedAudioPlayer.addStationChangedListener(stationListener);
+                feedAudioPlayer.setMaxBitrate(0);
                 stationListener.onStationChanged(feedAudioPlayer.getActiveStation());
                 progressBar.setVisibility(View.INVISIBLE);
                 feedAudioPlayer.setNotificationStyle(ni);
@@ -150,8 +149,6 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
         loadStationsFragment();
         setPendingIntent();
     }
-
-
 
     FeedAudioPlayer.StationChangedListener stationListener  = this::assignLockScreen;
 
@@ -217,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
         if(station != null)
         {
             feedAudioPlayer.setActiveStation(station, false);
-            feedAudioPlayer.prepareToPlay(null);
+            feedAudioPlayer.prepareToPlay(null,null);
             loadPlayerFragment((int)stationId);
         }
     }
@@ -231,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
         }
 
         if (bgUrl != null && !bgUrl.isEmpty()) {
-            Picasso.with(this).load(bgUrl).into(target);
+            Picasso.get().load(bgUrl).into(target);
         }
         else {
             Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.default_station_background);
@@ -246,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
         }
 
         @Override
-        public void onBitmapFailed(Drawable errorDrawable) {
+        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
             Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.default_station_background);
             feedAudioPlayer.setArtwork(bm);
         }
@@ -259,10 +256,8 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        switch(item.getItemId()) {
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                break;
+        if (item.getItemId() == android.R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
         }
         return true;
     }

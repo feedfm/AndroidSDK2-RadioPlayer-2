@@ -4,9 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -340,7 +340,7 @@ public class PlayHistoryFragment extends Fragment {
 
         if (bgUrl != null && !bgUrl.isEmpty()) {
 
-            Picasso.with(getContext()).load(bgUrl).resize(400, 400).centerCrop().into(imageView);
+            Picasso.get().load(bgUrl).resize(400, 400).centerCrop().into(imageView);
 
         } else {
 

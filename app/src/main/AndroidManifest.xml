@@ -27,8 +27,6 @@
 
         <activity
             android:name=".QrreaderActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".LaunchActivity">
             <intent-filter>
@@ -37,10 +35,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".RemoteList"
             android:label="@string/title_activity_remote_list"
-            android:theme="@style/RichPlayerLightTheme"></activity>
+            android:theme="@style/RichPlayerLightTheme"/>
     </application>
 
 </manifest>

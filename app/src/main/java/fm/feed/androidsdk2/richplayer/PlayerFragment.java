@@ -6,11 +6,10 @@ import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -257,7 +256,7 @@ public class PlayerFragment extends Fragment  {
             if(localStationList.size() > inx+1)  // If we have more stations available switch to them
             {
                 // TODO fix crash here
-                mPlayer.setActiveStation(localStationList.get(inx+1));
+                mPlayer.setActiveStation(localStationList.get(inx+1), true);
             }
         }
     };
@@ -347,7 +346,6 @@ public class PlayerFragment extends Fragment  {
 
 
     public void setupPlayer(Bundle savedInstanceState){
-        mPlayer.setCrossFadeInEnabled(true);
         mPlayer.addPlayListener(playListener);
         mPlayer.addStationChangedListener(stationChangedListener);
         mPlayer.addStateListener(stateListener);

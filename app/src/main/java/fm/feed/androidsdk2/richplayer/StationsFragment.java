@@ -6,9 +6,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -306,7 +306,7 @@ public class StationsFragment extends Fragment {
 
         if (bgUrl != null && !bgUrl.trim().equals("")) {
 
-            Picasso.with(getContext()).load(bgUrl).resize(400, 400).centerCrop().into(imageView);
+            Picasso.get().load(bgUrl).resize(400, 400).centerCrop().into(imageView);
 
         } else {
 

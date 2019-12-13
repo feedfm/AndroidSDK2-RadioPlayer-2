@@ -17,7 +17,7 @@ public class App extends Application {
         super.onCreate();
         SharedPreferences settings;
         settings = getSharedPreferences("FEEDCREDS", MODE_PRIVATE);
-        String token = settings.getString("token", "offline");
+        String token = settings.getString("token", "c996ba6946751c8e663e8538cf44a2be9bcff715");
         String secret = settings.getString("secret", "offline");
 
         FeedAudioPlayer.Builder builder = new FeedAudioPlayer.Builder().setToken(token)

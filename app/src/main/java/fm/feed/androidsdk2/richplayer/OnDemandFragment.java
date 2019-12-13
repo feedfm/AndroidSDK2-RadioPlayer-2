@@ -5,12 +5,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -101,7 +101,7 @@ public class OnDemandFragment extends Fragment {
                             switch (view.getId())
                             {
                                 case R.id.playSongOnDemand:
-                                    feedAudioPlayer.play(feedAudioPlayer.getActiveStation(), file);
+                                    feedAudioPlayer.play( file);
                                     break;
                                 case R.id.ondemand_dislike:
                                     feedAudioPlayer.dislike(file);
@@ -342,7 +342,7 @@ public class OnDemandFragment extends Fragment {
     private void loadImage(String url, ImageView imageView){
 
         if (url != null && !url.isEmpty()) {
-            Picasso.with(getContext()).load(url).resize(300,250).centerCrop().into(imageView);
+            Picasso.get().load(url).resize(300,250).centerCrop().into(imageView);
 
         } else {
             Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.default_station_background);
