@@ -21,8 +21,11 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import fm.feed.android.playersdk.AvailabilityListener;
 import fm.feed.android.playersdk.FeedAudioPlayer;
 import fm.feed.android.playersdk.FeedPlayerService;
+import fm.feed.android.playersdk.LikeStatusChangeListener;
+import fm.feed.android.playersdk.PlayListener;
 import fm.feed.android.playersdk.models.AudioFile;
 import fm.feed.android.playersdk.models.Play;
 import fm.feed.android.playersdk.models.Station;
@@ -84,7 +87,7 @@ public class PlayHistoryFragment extends Fragment {
             stationList = feedAudioPlayer.getLocalOfflineStationList();
             setupPlayer(inflater);
         }
-        feedAudioPlayer.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
+        feedAudioPlayer.addAvailabilityListener(new AvailabilityListener() {
                 @Override
                 public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
                     if(stationList != null)
@@ -118,7 +121,7 @@ public class PlayHistoryFragment extends Fragment {
         }
     }
 
-    FeedAudioPlayer.PlayListener playListener = new FeedAudioPlayer.PlayListener() {
+    PlayListener playListener = new PlayListener() {
         @Override
         public void onSkipStatusChanged(boolean b) {
 
@@ -141,7 +144,7 @@ public class PlayHistoryFragment extends Fragment {
 
     }
 
-    FeedAudioPlayer.LikeStatusChangeListener likeStatusChangeListener = new FeedAudioPlayer.LikeStatusChangeListener() {
+    LikeStatusChangeListener likeStatusChangeListener = new LikeStatusChangeListener() {
         @Override
         public void onLikeStatusChanged(AudioFile audioFile) {
             adapter.setNewData(feedAudioPlayer.getPlayHistory());

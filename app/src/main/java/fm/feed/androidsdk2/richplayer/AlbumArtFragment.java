@@ -27,8 +27,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import fm.feed.android.playersdk.AvailabilityListener;
 import fm.feed.android.playersdk.FeedAudioPlayer;
 import fm.feed.android.playersdk.FeedPlayerService;
+import fm.feed.android.playersdk.PlayListener;
+import fm.feed.android.playersdk.StationChangedListener;
 import fm.feed.android.playersdk.models.Play;
 import fm.feed.android.playersdk.models.Station;
 
@@ -84,7 +87,7 @@ public class AlbumArtFragment extends Fragment {
         }
     }
 
-    FeedAudioPlayer.PlayListener playListener = new FeedAudioPlayer.PlayListener() {
+    PlayListener playListener = new PlayListener() {
         @Override
         public void onSkipStatusChanged(boolean b) {
 
@@ -145,7 +148,7 @@ public class AlbumArtFragment extends Fragment {
         }
     }
 
-    FeedAudioPlayer.StationChangedListener stationChangedListener = new FeedAudioPlayer.StationChangedListener() {
+    StationChangedListener stationChangedListener = new StationChangedListener() {
         @Override
         public void onStationChanged(Station station) {
 
@@ -163,7 +166,7 @@ public class AlbumArtFragment extends Fragment {
         mPlayer = FeedPlayerService.getInstance();
 
         if(!isOfflineMode) {
-            mPlayer.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
+            mPlayer.addAvailabilityListener(new AvailabilityListener() {
                 @Override
                 public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
                     if ((getActivity() != null)) {

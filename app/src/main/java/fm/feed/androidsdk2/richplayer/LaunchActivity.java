@@ -16,8 +16,10 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import fm.feed.android.playersdk.AvailabilityListener;
 import fm.feed.android.playersdk.FeedAudioPlayer;
 import fm.feed.android.playersdk.FeedPlayerService;
+import fm.feed.android.playersdk.MockLocations;
 
 public class LaunchActivity extends AppCompatActivity {
 
@@ -47,35 +49,22 @@ public class LaunchActivity extends AppCompatActivity {
         internationalSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences settings;
+                settings = getSharedPreferences("FEEDCREDS", MODE_PRIVATE);
+                String token = settings.getString("token", "offline");
+                String secret = settings.getString("secret", "offline");
+                FeedAudioPlayer.Builder builder;
+                if(isChecked) {
+                    builder = new FeedAudioPlayer.Builder(getApplicationContext(), token, secret)
+                            .setMockLocation(MockLocations.EU);
+                } else {
 
-                if(isChecked)
-                {
-                    SharedPreferences settings;
-                    settings = getSharedPreferences("FEEDCREDS", MODE_PRIVATE);
-                    String token = settings.getString("token", "offline");
-                    String secret = settings.getString("secret", "offline");
-                    FeedAudioPlayer.Builder builder = new FeedAudioPlayer.Builder()
-                            .setSecret(secret)
-                            .setToken(token)
-                            .setContext(getApplicationContext())
-                            .setMockLocation(FeedAudioPlayer.MockLocations.EU);
-                    FeedPlayerService.initialize(builder);
+                    builder = new FeedAudioPlayer.Builder(getApplicationContext(), token, secret);
                 }
-                else {
-
-                    SharedPreferences settings;
-                    settings = getSharedPreferences("FEEDCREDS", MODE_PRIVATE);
-                    String token = settings.getString("token", "offline");
-                    String secret = settings.getString("secret", "offline");
-                    FeedAudioPlayer.Builder builder = new FeedAudioPlayer.Builder()
-                            .setSecret(secret)
-                            .setToken(token)
-                            .setContext(getApplicationContext());
-                    FeedPlayerService.initialize(builder);
-                }
+                FeedPlayerService.initialize(builder);
             }
         });
-        player.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
+        player.addAvailabilityListener(new AvailabilityListener() {
             @Override
             public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
                 if(feedAudioPlayer.getRemoteOfflineStationList().size() > 0)

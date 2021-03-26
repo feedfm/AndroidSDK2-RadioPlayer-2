@@ -28,9 +28,18 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import fm.feed.android.playersdk.AvailabilityListener;
 import fm.feed.android.playersdk.FeedAudioPlayer;
 import fm.feed.android.playersdk.FeedException;
 import fm.feed.android.playersdk.FeedPlayerService;
+import fm.feed.android.playersdk.LikeStatusChangeListener;
+import fm.feed.android.playersdk.OutOfMusicListener;
+import fm.feed.android.playersdk.PlayListener;
+import fm.feed.android.playersdk.SkipListener;
+import fm.feed.android.playersdk.State;
+import fm.feed.android.playersdk.StateListener;
+import fm.feed.android.playersdk.StationChangedListener;
+import fm.feed.android.playersdk.UnhandledErrorListener;
 import fm.feed.android.playersdk.models.AudioFile;
 import fm.feed.android.playersdk.models.Play;
 import fm.feed.android.playersdk.models.Station;
@@ -89,9 +98,9 @@ public class PlayerFragment extends Fragment  {
     @OnClick(R.id.play_pause_button)
     public void playPause()
     {
-        if (mPlayer.getState() != FeedAudioPlayer.State.PLAYING) {
+        if (mPlayer.getState() != State.PLAYING) {
             mPlayer.play();
-        } else if (mPlayer.getState() == FeedAudioPlayer.State.PLAYING) {
+        } else if (mPlayer.getState() == State.PLAYING) {
             mPlayer.pause();
         }
     }
@@ -147,23 +156,23 @@ public class PlayerFragment extends Fragment  {
      * the displayed metadata.
      */
 
-    FeedAudioPlayer.StateListener stateListener = new FeedAudioPlayer.StateListener() {
+    StateListener stateListener = new StateListener() {
         @Override
-        public void onStateChanged(FeedAudioPlayer.State state) {
+        public void onStateChanged(State state) {
 
-        if(state == FeedAudioPlayer.State.PLAYING)
+        if(state == State.PLAYING)
         {
             playPauseButton.setVisibility(View.VISIBLE);
             bufferingBar.setVisibility(View.INVISIBLE);
             playPauseButton.setImageResource(R.drawable.pause_black);
         }
-        else if(state == FeedAudioPlayer.State.PAUSED)
+        else if(state == State.PAUSED)
         {
             playPauseButton.setVisibility(View.VISIBLE);
             bufferingBar.setVisibility(View.INVISIBLE);
             playPauseButton.setImageResource(R.drawable.play_black);
         }
-        else if(state == FeedAudioPlayer.State.STALLED)
+        else if(state == State.STALLED)
         {
             ((Activity)mContext).runOnUiThread(() -> {
 
@@ -175,7 +184,7 @@ public class PlayerFragment extends Fragment  {
         }
     };
 
-    FeedAudioPlayer.StationChangedListener stationChangedListener = new FeedAudioPlayer.StationChangedListener() {
+    StationChangedListener stationChangedListener = new StationChangedListener() {
         @Override
         public void onStationChanged(Station station) {
             if(station.getAudioFiles() != null) {
@@ -191,7 +200,7 @@ public class PlayerFragment extends Fragment  {
         }
     };
 
-    FeedAudioPlayer.PlayListener playListener = new FeedAudioPlayer.PlayListener() {
+    PlayListener playListener = new PlayListener() {
 
         @Override
         public void onSkipStatusChanged(boolean b) {
@@ -210,14 +219,16 @@ public class PlayerFragment extends Fragment  {
 
         @Override
         public void onPlayStarted(Play play) {
-            trackText.setText(play.getAudioFile().getTrack().getTitle());
-            ArtistText.setText(play.getAudioFile().getArtist().getName());
-            likeStatusChangeListener.onLikeStatusChanged(play.getAudioFile());
+            if(play != null) {
+                trackText.setText(play.getAudioFile().getTrack().getTitle());
+                ArtistText.setText(play.getAudioFile().getArtist().getName());
+                likeStatusChangeListener.onLikeStatusChanged(play.getAudioFile());
+            }
 
         }
     };
 
-    FeedAudioPlayer.LikeStatusChangeListener likeStatusChangeListener = new FeedAudioPlayer.LikeStatusChangeListener() {
+    LikeStatusChangeListener likeStatusChangeListener = new LikeStatusChangeListener() {
         @Override
         public void onLikeStatusChanged(AudioFile audioFile) {
             if((mPlayer.getCurrentPlay() != null && audioFile.getId().equals(mPlayer.getCurrentPlay().getAudioFile().getId()))) {
@@ -245,7 +256,7 @@ public class PlayerFragment extends Fragment  {
         }
     };
 
-    FeedAudioPlayer.UnhandledErrorListener errorListener = new FeedAudioPlayer.UnhandledErrorListener() {
+    UnhandledErrorListener errorListener = new UnhandledErrorListener() {
         @Override
         public void onUnhandledError(FeedException e) {
             Log.e(TAG, e.toString());
@@ -253,7 +264,7 @@ public class PlayerFragment extends Fragment  {
     };
 
     // Station has ended, so we are switching to a next station.
-    FeedAudioPlayer.OutOfMusicListener outOfMusicListener = new FeedAudioPlayer.OutOfMusicListener() {
+    OutOfMusicListener outOfMusicListener = new OutOfMusicListener() {
         @Override
         public void onOutOfMusic() {
             int inx = localStationList.indexOf(mStation);
@@ -265,7 +276,7 @@ public class PlayerFragment extends Fragment  {
         }
     };
 
-    FeedAudioPlayer.SkipListener skipListener = new FeedAudioPlayer.SkipListener() {
+    SkipListener skipListener = new SkipListener() {
         @Override
         public void requestCompleted(boolean b) {
 
@@ -316,7 +327,7 @@ public class PlayerFragment extends Fragment  {
         mPlayer = FeedPlayerService.getInstance();
         if(!isOfflineMode) {
 
-            mPlayer.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
+            mPlayer.addAvailabilityListener(new AvailabilityListener() {
                 @Override
                 public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
                     localStationList = mPlayer.getStationList();

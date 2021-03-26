@@ -17,12 +17,10 @@ public class App extends Application {
         super.onCreate();
         SharedPreferences settings;
         settings = getSharedPreferences("FEEDCREDS", MODE_PRIVATE);
-        String token = settings.getString("token", "offline");
-        String secret = settings.getString("secret", "offline");
+        String token = settings.getString("token", "demo");
+        String secret = settings.getString("secret", "demo");
 
-        FeedAudioPlayer.Builder builder = new FeedAudioPlayer.Builder().setToken(token)
-                .setSecret(secret)
-                .setContext(getApplicationContext());
+        FeedAudioPlayer.Builder builder = new FeedAudioPlayer.Builder(getApplicationContext(), token, secret);
         // Do not build, send builder to FeedPlayerService
         FeedPlayerService.initialize(builder);
     }

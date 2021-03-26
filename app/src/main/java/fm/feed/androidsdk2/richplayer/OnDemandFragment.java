@@ -27,8 +27,13 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import fm.feed.android.playersdk.AvailabilityListener;
 import fm.feed.android.playersdk.FeedAudioPlayer;
 import fm.feed.android.playersdk.FeedPlayerService;
+import fm.feed.android.playersdk.LikeStatusChangeListener;
+import fm.feed.android.playersdk.PlayListener;
+import fm.feed.android.playersdk.State;
+import fm.feed.android.playersdk.StateListener;
 import fm.feed.android.playersdk.models.AudioFile;
 import fm.feed.android.playersdk.models.Play;
 import fm.feed.android.playersdk.models.Station;
@@ -77,7 +82,7 @@ public class OnDemandFragment extends Fragment {
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Playlist");
         }
 
-        FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
+        FeedPlayerService.getInstance(new AvailabilityListener() {
             @Override
             public void onPlayerAvailable(final FeedAudioPlayer feedAudioPlayer) {
                 mFeedAudioPlayer = feedAudioPlayer;
@@ -128,21 +133,21 @@ public class OnDemandFragment extends Fragment {
         return view;
     }
 
-    FeedAudioPlayer.StateListener stateListener = new FeedAudioPlayer.StateListener() {
+    StateListener stateListener = new StateListener() {
         @Override
-        public void onStateChanged(FeedAudioPlayer.State state) {
-            if(state == FeedAudioPlayer.State.PLAYING)
+        public void onStateChanged(State state) {
+            if(state == State.PLAYING)
             {
                 mAdapter.setPlaying(true);
             }
-            else if(state == FeedAudioPlayer.State.PAUSED)
+            else if(state == State.PAUSED)
             {
                 mAdapter.setPlaying(false);
             }
         }
     };
 
-    FeedAudioPlayer.PlayListener playListener = new FeedAudioPlayer.PlayListener() {
+    PlayListener playListener = new PlayListener() {
 
         @Override
         public void onSkipStatusChanged(boolean b) {
@@ -159,7 +164,7 @@ public class OnDemandFragment extends Fragment {
         }
     };
 
-    FeedAudioPlayer.LikeStatusChangeListener likeStatusChangeListener = new FeedAudioPlayer.LikeStatusChangeListener() {
+    LikeStatusChangeListener likeStatusChangeListener = new LikeStatusChangeListener() {
         @Override
         public void onLikeStatusChanged(AudioFile audioFile) {
             mAdapter.setUpdatedAudioFile(audioFile);
@@ -314,7 +319,7 @@ public class OnDemandFragment extends Fragment {
         // find a bitmap and assign it to 'bm'
         String bgUrl = null;
         try {
-            Map<String, Object> map = audioFile.getOptions();
+            Map<String, Object> map = audioFile.getMetadata();
             if(map.containsKey("background_image_url"))
             {
                 bgUrl = (String) map.get("background_image_url");

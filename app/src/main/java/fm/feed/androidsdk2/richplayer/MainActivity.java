@@ -24,12 +24,16 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import fm.feed.android.playersdk.AvailabilityListener;
 import fm.feed.android.playersdk.FeedAudioPlayer;
 import fm.feed.android.playersdk.FeedPlayerService;
+import fm.feed.android.playersdk.StationChangedListener;
 import fm.feed.android.playersdk.models.NotificationStyle;
 import fm.feed.android.playersdk.models.Station;
 
@@ -80,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
         }
         else if(str.equals("Online"))  {
             isOfflineMode = false;
-            feedAudioPlayer.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
+            feedAudioPlayer.addAvailabilityListener(new AvailabilityListener() {
                 @Override
                 public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
                     stationList = feedAudioPlayer.getStationList();
@@ -124,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
 
         mFragmentManager = getSupportFragmentManager();
 
-        FeedPlayerService.getInstance(new FeedAudioPlayer.AvailabilityListener() {
+        FeedPlayerService.getInstance(new AvailabilityListener() {
             @Override
             public void onPlayerAvailable(FeedAudioPlayer aFeedAudioPlayer) {
                 feedAudioPlayer = aFeedAudioPlayer;
@@ -150,7 +154,12 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
         setPendingIntent();
     }
 
-    FeedAudioPlayer.StationChangedListener stationListener  = this::assignLockScreen;
+    StationChangedListener stationListener  = new StationChangedListener() {
+        @Override
+        public void onStationChanged(@NotNull Station station) {
+
+        }
+    };
 
     private void setPendingIntent(){
         Intent ai = new Intent(getIntent());
@@ -213,45 +222,11 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
         Station station = getStationById((int)stationId, stationList);
         if(station != null)
         {
-            feedAudioPlayer.setActiveStation(station, false);
-            feedAudioPlayer.prepareToPlay(null,null);
+            feedAudioPlayer.prepareToPlay(station,null);
             loadPlayerFragment((int)stationId);
         }
     }
 
-    private void assignLockScreen(Station station) {
-        String bgUrl;
-        try {
-            bgUrl = (String) station.getOption("background_image_url");
-        } catch (Exception e) {
-            bgUrl = null;
-        }
-
-        if (bgUrl != null && !bgUrl.isEmpty()) {
-            Picasso.get().load(bgUrl).into(target);
-        }
-        else {
-            Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.default_station_background);
-            feedAudioPlayer.setArtwork(bm);
-        }
-    }
-
-    private Target target = new Target() {
-        @Override
-        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-            feedAudioPlayer.setArtwork(bitmap);
-        }
-
-        @Override
-        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-            Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.default_station_background);
-            feedAudioPlayer.setArtwork(bm);
-        }
-
-        @Override
-        public void onPrepareLoad(Drawable placeHolderDrawable) {
-        }
-    };
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

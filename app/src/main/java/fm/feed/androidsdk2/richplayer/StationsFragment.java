@@ -27,8 +27,13 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import fm.feed.android.playersdk.AvailabilityListener;
 import fm.feed.android.playersdk.FeedAudioPlayer;
 import fm.feed.android.playersdk.FeedPlayerService;
+import fm.feed.android.playersdk.PlayListener;
+import fm.feed.android.playersdk.State;
+import fm.feed.android.playersdk.StateListener;
+import fm.feed.android.playersdk.StationChangedListener;
 import fm.feed.android.playersdk.models.Play;
 import fm.feed.android.playersdk.models.Station;
 
@@ -90,7 +95,7 @@ public class StationsFragment extends Fragment {
         }
         feedAudioPlayer = FeedPlayerService.getInstance();
         if(!isOfflineMode) {
-            feedAudioPlayer.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
+            feedAudioPlayer.addAvailabilityListener(new AvailabilityListener() {
                 @Override
                 public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
                     localStationList = feedAudioPlayer.getStationList();
@@ -136,17 +141,17 @@ public class StationsFragment extends Fragment {
         });
     }
 
-    FeedAudioPlayer.StationChangedListener stationChangedListener = new FeedAudioPlayer.StationChangedListener() {
+    StationChangedListener stationChangedListener = new StationChangedListener() {
         @Override
         public void onStationChanged(Station station) {
             stationAdaptor.setActiveStation();
         }
     };
 
-    FeedAudioPlayer.StateListener stateListener = new FeedAudioPlayer.StateListener() {
+    StateListener stateListener = new StateListener() {
         @Override
-        public void onStateChanged(FeedAudioPlayer.State state) {
-            if(state == FeedAudioPlayer.State.PLAYING){
+        public void onStateChanged(State state) {
+            if(state == State.PLAYING){
                 stationAdaptor.setIsPlaying(true);
             }
             else
@@ -156,7 +161,7 @@ public class StationsFragment extends Fragment {
         }
     };
 
-    FeedAudioPlayer.PlayListener playListener = new FeedAudioPlayer.PlayListener() {
+    PlayListener playListener = new PlayListener() {
         @Override
         public void onSkipStatusChanged(boolean b) {
 
@@ -241,11 +246,11 @@ public class StationsFragment extends Fragment {
                 holder.stationType.setText(stationList.get(i).getOption("subheader").toString());
             }
 
-            if((feedAudioPlayer.getState().equals(FeedAudioPlayer.State.PLAYING) || feedAudioPlayer.getState().equals(FeedAudioPlayer.State.PAUSED)) &&(stationList.get(i).getId().equals(feedAudioPlayer.getActiveStation().getId()))){
-                if(feedAudioPlayer.getState().equals(FeedAudioPlayer.State.PLAYING)) {
+            if((feedAudioPlayer.getState().equals(State.PLAYING) || feedAudioPlayer.getState().equals(State.PAUSED)) &&(stationList.get(i).getId().equals(feedAudioPlayer.getActiveStation().getId()))){
+                if(feedAudioPlayer.getState().equals(State.PLAYING)) {
                     holder.circularProgressView.isPlaying(true);
                 }
-                else if(feedAudioPlayer.getState().equals(FeedAudioPlayer.State.PAUSED))
+                else if(feedAudioPlayer.getState().equals(State.PAUSED))
                 {
                     holder.circularProgressView.isPlaying(false);
                 }

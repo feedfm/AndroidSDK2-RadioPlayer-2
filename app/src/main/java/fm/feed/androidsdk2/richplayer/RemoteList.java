@@ -19,8 +19,10 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import fm.feed.android.playersdk.AvailabilityListener;
 import fm.feed.android.playersdk.FeedAudioPlayer;
 import fm.feed.android.playersdk.FeedPlayerService;
+import fm.feed.android.playersdk.StationDownloadListener;
 import fm.feed.android.playersdk.models.Station;
 import fm.feed.android.playersdk.models.StationList;
 
@@ -38,7 +40,7 @@ public class RemoteList extends AppCompatActivity {
         setContentView(R.layout.activity_remote_list);
         ButterKnife.bind(this);
         player = FeedPlayerService.getInstance();
-        player.addAvailabilityListener(new FeedAudioPlayer.AvailabilityListener() {
+        player.addAvailabilityListener(new AvailabilityListener() {
 
             @Override
             public void onPlayerAvailable(FeedAudioPlayer feedAudioPlayer) {
@@ -70,7 +72,7 @@ public class RemoteList extends AppCompatActivity {
     }
 
 
-    FeedAudioPlayer.StationDownloadListener stationDownloadListener = new FeedAudioPlayer.StationDownloadListener() {
+    StationDownloadListener stationDownloadListener = new StationDownloadListener() {
 
         /**
          *  totalDownloads
