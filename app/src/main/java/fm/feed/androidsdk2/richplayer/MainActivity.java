@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
         Station station = getStationById((int)stationId, stationList);
         if(station != null)
         {
-            feedAudioPlayer.prepareToPlay(station,null);
+            feedAudioPlayer.setActiveStation(station,false);
             loadPlayerFragment((int)stationId);
         }
     }
