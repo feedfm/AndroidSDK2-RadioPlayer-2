@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
     private void setPendingIntent(){
         Intent ai = new Intent(getIntent());
         ai.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pi = PendingIntent.getActivity(MainActivity.this, 0, ai, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent pi = PendingIntent.getActivity(MainActivity.this, 0, ai, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         feedAudioPlayer.setPendingIntent(pi);
     }
 
