@@ -7,3 +7,4 @@ This player will retrieve the list of stations to display from the server, along
 
 This is the Android equivalent of [iOS RadioPlayer2](https://github.com/feedfm/iOS-RadioPlayer-2)
 
+To report a bug or get support, please email support@feed.fm.
