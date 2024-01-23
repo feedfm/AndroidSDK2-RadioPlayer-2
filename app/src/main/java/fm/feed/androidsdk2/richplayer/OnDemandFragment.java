@@ -22,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.Map;
 
@@ -29,9 +31,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import fm.feed.android.playersdk.AvailabilityListener;
 import fm.feed.android.playersdk.FeedAudioPlayer;
+import fm.feed.android.playersdk.FeedFMError;
 import fm.feed.android.playersdk.FeedPlayerService;
 import fm.feed.android.playersdk.LikeStatusChangeListener;
 import fm.feed.android.playersdk.PlayListener;
+import fm.feed.android.playersdk.SkipListener;
 import fm.feed.android.playersdk.State;
 import fm.feed.android.playersdk.StateListener;
 import fm.feed.android.playersdk.models.AudioFile;
@@ -109,7 +113,12 @@ public class OnDemandFragment extends Fragment {
                                     feedAudioPlayer.play( file);
                                     break;
                                 case R.id.ondemand_dislike:
-                                    feedAudioPlayer.dislike(file);
+                                    feedAudioPlayer.dislike(file, new SkipListener() {
+                                        @Override
+                                        public void requestCompleted(boolean b) {
+
+                                        }
+                                    });
                                     break;
                                 case R.id.ondemand_like:
                                     feedAudioPlayer.like(file);
@@ -148,6 +157,11 @@ public class OnDemandFragment extends Fragment {
     };
 
     PlayListener playListener = new PlayListener() {
+
+        @Override
+        public void onPlayerError(@NotNull FeedFMError feedFMError) {
+
+        }
 
         @Override
         public void onSkipStatusChanged(boolean b) {

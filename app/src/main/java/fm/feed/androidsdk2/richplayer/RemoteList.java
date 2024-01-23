@@ -13,6 +13,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -21,6 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import fm.feed.android.playersdk.AvailabilityListener;
 import fm.feed.android.playersdk.FeedAudioPlayer;
+import fm.feed.android.playersdk.FeedFMError;
 import fm.feed.android.playersdk.FeedPlayerService;
 import fm.feed.android.playersdk.StationDownloadListener;
 import fm.feed.android.playersdk.models.Station;
@@ -74,6 +77,11 @@ public class RemoteList extends AppCompatActivity {
 
     StationDownloadListener stationDownloadListener = new StationDownloadListener() {
 
+        @Override
+        public void onError(@NotNull FeedFMError feedFMError) {
+
+        }
+
         /**
          *  totalDownloads
          *  pendingDownloads
@@ -84,7 +92,7 @@ public class RemoteList extends AppCompatActivity {
         public void onDownloadProgress(Station station, int totalDownloads, int pendingDownloads, int interruptedDownloads) {
 
             float percent = ((totalDownloads - pendingDownloads - interruptedDownloads) *100) / totalDownloads;
-            Progress progress = new Progress(station.getId(), percent);
+            Progress progress = new Progress(station.getTempId(), percent);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -154,7 +162,7 @@ public class RemoteList extends AppCompatActivity {
 
         @Override
         public long getItemId(int position) {
-            return stationArrayList.get(position).getId();
+            return stationArrayList.get(position).getTempId();
         }
 
         @Override
@@ -170,7 +178,7 @@ public class RemoteList extends AppCompatActivity {
                 holder = (RemoteList.RemoteAdapter.ViewHolder) convertView.getTag();
             }
             for (Progress pr:progresses) {
-                if(pr.getId().equals(stationArrayList.get(position).getId())) {
+                if(pr.getId().equals(stationArrayList.get(position).getTempId())) {
                     holder.progressBar.setProgress((int) pr.getProgress());
                 }
             }

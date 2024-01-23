@@ -22,6 +22,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -29,6 +31,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fm.feed.android.playersdk.AvailabilityListener;
 import fm.feed.android.playersdk.FeedAudioPlayer;
+import fm.feed.android.playersdk.FeedFMError;
 import fm.feed.android.playersdk.FeedPlayerService;
 import fm.feed.android.playersdk.PlayListener;
 import fm.feed.android.playersdk.State;
@@ -163,6 +166,11 @@ public class StationsFragment extends Fragment {
 
     PlayListener playListener = new PlayListener() {
         @Override
+        public void onPlayerError(@NotNull FeedFMError feedFMError) {
+
+        }
+
+        @Override
         public void onSkipStatusChanged(boolean b) {
 
         }
@@ -227,7 +235,7 @@ public class StationsFragment extends Fragment {
 
         @Override
         public long getItemId(int i) {
-            return stationList.get(i).getId();
+            return stationList.get(i).getTempId();
         }
 
         @Override
@@ -246,7 +254,7 @@ public class StationsFragment extends Fragment {
                 holder.stationType.setText(stationList.get(i).getOption("subheader").toString());
             }
 
-            if((feedAudioPlayer.getState().equals(State.PLAYING) || feedAudioPlayer.getState().equals(State.PAUSED)) &&(stationList.get(i).getId().equals(feedAudioPlayer.getActiveStation().getId()))){
+            if((feedAudioPlayer.getState().equals(State.PLAYING) || feedAudioPlayer.getState().equals(State.PAUSED)) &&(stationList.get(i).getTempId().equals(feedAudioPlayer.getActiveStation().getTempId()))){
                 if(feedAudioPlayer.getState().equals(State.PLAYING)) {
                     holder.circularProgressView.isPlaying(true);
                 }

@@ -21,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -31,6 +33,7 @@ import butterknife.OnClick;
 import fm.feed.android.playersdk.AvailabilityListener;
 import fm.feed.android.playersdk.FeedAudioPlayer;
 import fm.feed.android.playersdk.FeedException;
+import fm.feed.android.playersdk.FeedFMError;
 import fm.feed.android.playersdk.FeedPlayerService;
 import fm.feed.android.playersdk.LikeStatusChangeListener;
 import fm.feed.android.playersdk.OutOfMusicListener;
@@ -39,7 +42,6 @@ import fm.feed.android.playersdk.SkipListener;
 import fm.feed.android.playersdk.State;
 import fm.feed.android.playersdk.StateListener;
 import fm.feed.android.playersdk.StationChangedListener;
-import fm.feed.android.playersdk.UnhandledErrorListener;
 import fm.feed.android.playersdk.models.AudioFile;
 import fm.feed.android.playersdk.models.Play;
 import fm.feed.android.playersdk.models.Station;
@@ -196,11 +198,16 @@ public class PlayerFragment extends Fragment  {
                 playHistory.setVisibility(View.VISIBLE);
             }
             mStation = station;
-            mStationID = station.getId();
+            mStationID = station.getTempId();
         }
     };
 
     PlayListener playListener = new PlayListener() {
+
+        @Override
+        public void onPlayerError(@NotNull FeedFMError feedFMError) {
+
+        }
 
         @Override
         public void onSkipStatusChanged(boolean b) {
@@ -256,12 +263,6 @@ public class PlayerFragment extends Fragment  {
         }
     };
 
-    UnhandledErrorListener errorListener = new UnhandledErrorListener() {
-        @Override
-        public void onUnhandledError(FeedException e) {
-            Log.e(TAG, e.toString());
-        }
-    };
 
     // Station has ended, so we are switching to a next station.
     OutOfMusicListener outOfMusicListener = new OutOfMusicListener() {
@@ -365,7 +366,6 @@ public class PlayerFragment extends Fragment  {
         mPlayer.addStationChangedListener(stationChangedListener);
         mPlayer.addStateListener(stateListener);
         mPlayer.addLikeStatusChangeListener(likeStatusChangeListener);
-        mPlayer.addUnhandledErrorListener(errorListener);
         mPlayer.addOutOfMusicListener(outOfMusicListener);
         mPlayer.addSkipListener(skipListener);
         playHistory.setImageAlpha(204);

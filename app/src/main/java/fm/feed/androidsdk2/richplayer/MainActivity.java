@@ -242,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements StationsFragment.
         Station tStation = null;
         for (Station station: stationList)
         {
-            if(station.getId() == id)
+            if(station.getTempId() == id)
             {
                 tStation = station; break;
             }

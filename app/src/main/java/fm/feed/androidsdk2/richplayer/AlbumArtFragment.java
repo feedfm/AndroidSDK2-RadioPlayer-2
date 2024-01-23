@@ -22,6 +22,8 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -29,6 +31,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fm.feed.android.playersdk.AvailabilityListener;
 import fm.feed.android.playersdk.FeedAudioPlayer;
+import fm.feed.android.playersdk.FeedFMError;
 import fm.feed.android.playersdk.FeedPlayerService;
 import fm.feed.android.playersdk.PlayListener;
 import fm.feed.android.playersdk.StationChangedListener;
@@ -88,6 +91,11 @@ public class AlbumArtFragment extends Fragment {
     }
 
     PlayListener playListener = new PlayListener() {
+        @Override
+        public void onPlayerError(@NotNull FeedFMError feedFMError) {
+
+        }
+
         @Override
         public void onSkipStatusChanged(boolean b) {
 
@@ -152,7 +160,7 @@ public class AlbumArtFragment extends Fragment {
         @Override
         public void onStationChanged(Station station) {
 
-            mStationID = station.getId();
+            mStationID = station.getTempId();
         }
     };
 
@@ -203,7 +211,7 @@ public class AlbumArtFragment extends Fragment {
             pagerAdapter = new MyPagerAdapter();
             int temp = 0;
             for (Station st: localStationList) {
-                if(st.getId() == mStationID) {
+                if(st.getTempId() == mStationID) {
                     break;
                 }
                 temp++;

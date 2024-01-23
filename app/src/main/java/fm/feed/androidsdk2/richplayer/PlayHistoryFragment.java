@@ -18,14 +18,18 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.jetbrains.annotations.NotNull;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fm.feed.android.playersdk.AvailabilityListener;
 import fm.feed.android.playersdk.FeedAudioPlayer;
+import fm.feed.android.playersdk.FeedFMError;
 import fm.feed.android.playersdk.FeedPlayerService;
 import fm.feed.android.playersdk.LikeStatusChangeListener;
 import fm.feed.android.playersdk.PlayListener;
+import fm.feed.android.playersdk.SkipListener;
 import fm.feed.android.playersdk.models.AudioFile;
 import fm.feed.android.playersdk.models.Play;
 import fm.feed.android.playersdk.models.Station;
@@ -123,6 +127,11 @@ public class PlayHistoryFragment extends Fragment {
 
     PlayListener playListener = new PlayListener() {
         @Override
+        public void onPlayerError(@NotNull FeedFMError feedFMError) {
+
+        }
+
+        @Override
         public void onSkipStatusChanged(boolean b) {
 
         }
@@ -172,7 +181,7 @@ public class PlayHistoryFragment extends Fragment {
             if(!isAdded)
             {
                PlayByStations pbS =  new PlayByStations();
-               pbS.station = MainActivity.getStationById( station.getId(), stationList);
+               pbS.station = MainActivity.getStationById( station.getTempId(), stationList);
                pbS.playForThisStation.add(play);
                list.add(pbS);
             }
@@ -222,7 +231,7 @@ public class PlayHistoryFragment extends Fragment {
 
         @Override
         public long getGroupId(int i) {
-            return playHistory.get(i).station.getId();
+            return playHistory.get(i).station.getTempId();
         }
 
         @Override
@@ -320,7 +329,12 @@ public class PlayHistoryFragment extends Fragment {
             public void OnDisLike(ImageButton button)
             {
                 if(!((AudioFile)button.getTag()).isDisliked()) {
-                    feedAudioPlayer.dislike((AudioFile)button.getTag());
+                    feedAudioPlayer.dislike((AudioFile) button.getTag(), new SkipListener() {
+                        @Override
+                        public void requestCompleted(boolean b) {
+
+                        }
+                    });
                 }
                 else {
                     feedAudioPlayer.unlike((AudioFile) button.getTag());
